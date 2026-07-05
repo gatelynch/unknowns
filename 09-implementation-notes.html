@@ -1,0 +1,586 @@
+ 版權所有 2026 Anthropic PBC · SPDX-許可證-識別碼：Apache-2.0 
+html
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>實作筆記－了解你的未知</title>
+<style>
+ :root {
+  --ivory: #FAF9F5;
+  --paper: #FFFFFF;
+  --slate: #141413;
+  --clay:  #D97757;
+  --clay-d: #B85C3E;
+  --oat:  #E3DACC;
+  --olive: #788C5D;
+  --g100:  #F0EEE6;
+  --g200:  #E6E3DA;
+  --g300:  #D1CFC5;
+  --g500:  #87867F;
+  --g700:  #3D3D3A;
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --sans: system-ui, -應用程式le-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+ }
+ * { box-sizing: border-box; }
+ body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--slate);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+ }
+ .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px 100px; }
+
+ /* ── header ── */
+ header.page { padding: 56px 0 8px; position: relative; }
+ .eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g500);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+ }
+ .eyebrow::before { content: ""; width: 24px; height: 1.5px; background: var(--clay); flex: none; }
+ a.back {
+  position: absolute;
+  top: 60px; right: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--g500);
+  text-decoration: none;
+ }
+ a.back:hover { color: var(--clay-d); }
+ h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(32px, 5vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 0 0 10px;
+ }
+ .lede { font-size: 16.5px; color: var(--g700); max-width: 640px; margin: 0 0 30px; }
+
+ /* ── 提示詞 box ── */
+ .提示詞card {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 22px 26px 24px;
+  position: relative;
+ }
+ .提示詞card .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: 12px;
+ }
+ .提示詞card blockquote {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17.5px;
+  line-height: 1.6;
+  color: var(--slate);
+  max-width: 62ch;
+ }
+ button.copybtn {
+  position: absolute;
+  top: 18px; right: 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--g700);
+  background: var(--g100);
+  border: 1.5px solid var(--g300);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+ }
+ button.copybtn:hover { border-color: var(--g500); }
+ button.copybtn.done { color: var(--olive); border-color: var(--olive); background: var(--paper); }
+
+ /* ── divider ── */
+ .divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 48px 0 30px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--g500);
+  white-space: nowrap;
+ }
+ .divider::before, .divider::after { content: ""; height: 1.5px; background: var(--g300); flex: 1; }
+
+ /* ── 產物: notes document ── */
+ .doc {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  overflow: hidden;
+ }
+ .doc-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 14px 22px;
+  border-bottom: 1.5px solid var(--g200);
+  background: var(--g100);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--g700);
+ }
+ .doc-head .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--olive); flex: none; }
+ .doc-head .path { overflow-wrap: anywhere; }
+ .doc-head .meta { margin-left: auto; color: var(--g500); }
+
+ .doc-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 22px 22px 0;
+ }
+ .stat {
+  flex: 1 1 130px;
+  background: var(--ivory);
+  border: 1.5px solid var(--g200);
+  border-radius: 10px;
+  padding: 12px 16px 10px;
+ }
+ .stat .n { font-family: var(--serif); font-weight: 500; font-size: 30px; line-height: 1.1; letter-spacing: -0.02em; }
+ .stat .t { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--g500); margin-top: 3px; }
+ .stat.dev .n { color: var(--clay-d); }
+ .stat.you .n { color: var(--slate); }
+ .stat.you { border-color: var(--oat); background: #F6F0E4; }
+
+ /* filter chips */
+ .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 18px 22px 4px;
+ }
+ .chip {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--g300);
+  background: var(--paper);
+  color: var(--g700);
+  cursor: pointer;
+ }
+ .chip:hover { border-color: var(--g500); }
+ .chip.on { background: var(--slate); border-color: var(--slate); color: var(--ivory); }
+ .chip .ct { color: var(--g500); }
+ .chip.on .ct { color: var(--g300); }
+
+ /* timeline */
+ .timeline { padding: 16px 22px 26px; }
+ .entry {
+  display: grid;
+  grid-template-columns: 52px 14px 1fr;
+  gap: 0 14px;
+  position: relative;
+ }
+ .entry .ts {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--g500);
+  padding-top: 4px;
+  text-align: right;
+ }
+ .entry .rail { position: relative; }
+ .entry .rail::before {
+  content: "";
+  position: absolute;
+  left: 50%; top: 0; bottom: 0;
+  width: 1.5px;
+  background: var(--g200);
+  transform: translateX(-50%);
+ }
+ .entry.rail-first .rail::before { top: 10px; }
+ .entry.rail-last .rail::before { bottom: auto; height: 10px; }
+ .entry.rail-first.rail-last .rail::before { display: none; }
+ .entry .node {
+  position: absolute;
+  left: 50%; top: 8px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: var(--g300);
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 0 1.5px var(--g300);
+ }
+ .entry.t-plan .node  { background: var(--olive); box-shadow: 0 0 0 1.5px var(--olive); }
+ .entry.t-dev .node   { background: var(--clay); box-shadow: 0 0 0 1.5px var(--clay); }
+ .entry.t-disc .node  { background: var(--oat);  box-shadow: 0 0 0 1.5px var(--g500); }
+ .entry.t-human .node  { background: var(--slate); box-shadow: 0 0 0 1.5px var(--slate); }
+ .entry .body { padding: 0 0 22px; min-width: 0; }
+ .badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2.5px 9px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+ }
+ .t-plan .badge { color: var(--olive); background: #EEF1E8; border: 1px solid #C9D4B8; }
+ .t-dev  .badge { color: #fff; background: var(--clay); border: 1px solid var(--clay); }
+ .t-disc .badge { color: var(--g700); background: var(--g100); border: 1px solid var(--g300); }
+ .t-human .badge { color: var(--ivory); background: var(--slate); border: 1px solid var(--slate); }
+ .entry h3 {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 0 4px;
+  letter-spacing: -0.005em;
+ }
+ .entry p { margin: 0; font-size: 14px; color: var(--g700); max-width: 68ch; }
+ .entry code, .devgrid code, .n2 code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--g100);
+  border: 1px solid var(--g200);
+  border-radius: 5px;
+  padding: 1px 5px;
+  overflow-wrap: anywhere;
+ }
+ .ts-mobile { display: none; }
+
+ /* deviation sub-fields */
+ .devgrid {
+  margin-top: 10px;
+  border: 1.5px solid var(--oat);
+  border-left: 3px solid var(--clay);
+  border-radius: 10px;
+  background: #FBF6EC;
+  overflow: hidden;
+ }
+ .devgrid .row {
+  display: grid;
+  grid-template-columns: 158px 1fr;
+  gap: 12px;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  color: var(--g700);
+ }
+ .devgrid .row + .row { border-top: 1px solid #EFE5D2; }
+ .devgrid .k {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--clay-d);
+  padding-top: 2px;
+ }
+ .devgrid .row.chosen .k { color: var(--olive); }
+ .devgrid .row.chosen .v { color: var(--slate); font-weight: 500; }
+ @media (max-width: 560px) {
+  .devgrid .row { grid-template-columns: 1fr; gap: 2px; }
+  .entry { grid-template-columns: 14px 1fr; }
+  .entry .ts { display: none; }
+  .ts-mobile { display: inline; font-family: var(--mono); font-size: 11px; color: var(--g500); margin-left: 8px; }
+ }
+
+ /* attempt #2 block */
+ .next {
+  margin-top: 26px;
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 24px 26px 22px;
+  position: relative;
+ }
+ .next .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: 8px;
+ }
+ .next h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+ }
+ .next .sub { font-size: 14px; color: var(--g500); margin: 0 0 14px; max-width: 60ch; }
+ .next ol { margin: 0; padding-left: 22px; }
+ .next li { font-size: 14.5px; color: var(--g700); margin-bottom: 10px; max-width: 70ch; }
+ .next li strong { color: var(--slate); font-weight: 600; }
+
+ footer {
+  margin-top: 64px;
+  padding-top: 22px;
+  border-top: 1.5px solid var(--g300);
+  font-size: 13.5px;
+  color: var(--g500);
+ }
+ footer a { color: var(--clay-d); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+
+ .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="page">
+<div class="eyebrow">了解你的未知 · 實作期間</div>
+<a class="back" href="index.html">← 所有範例</a>
+<h1>實作筆記</h1>
+<p class="lede">無論你做了多少規劃，總是會有隱藏的未知。請 Claude Code 保留實作筆記，用來追蹤它做出的決定，以便下一次嘗試時能學習。</p>
+<div class="提示詞card">
+<div class="label">提示詞</div>
+<button class="copybtn" id="copyPrompt">複製提示詞</button>
+<blockquote id="提示詞Text">保持撰寫 `implementation-notes.md` 檔案的習慣。如果你遇到被迫偏離計畫的邊緣案例（edge case），請選擇保守的方案，將其記錄在「Deviations」（偏差）章節中，然後繼續進行。</blockquote>
+</div>
+</header>
+<div class="divider">Claude 產出的內容</div>
+<div class="doc">
+<div class="doc-head">
+<span class="dot"></span>
+<span class="path">docs/notes/export-feature-implementation.md</span>
+<span class="meta">運行開始 14:02 · 最後寫入 16:51 · 分支壯舉/審核匯出</span>
+</div>
+<div class="doc-summary">
+<div class="stat"><div class="n">11</div><div class="t">條目</div></div>
+<div class="stat dev"><div class="n">4</div><div class="t">偏離</div></div>
+<div class="stat you"><div class="n">2</div><div class="t">需要你的判斷</div></div>
+</div>
+<div aria-label="Filter entries" class="chips" role="tablist">
+<button class="chip on" data-f="all">全部 <span class="ct">11</span></button>
+<button class="chip" data-f="dev">偏離 <span class="ct">4</span></button>
+<button class="chip" data-f="human">為你 <span class="ct">2</span></button>
+</div>
+<div class="timeline" id="timeline">
+<div class="entry t-plan" data-t="plan">
+<div class="ts">14:02</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">計畫確認</span><span class="ts-mobile">14:02</span>
+<h3>步驟 1 — 按計畫匯出作業模型和佇列連接</h3>
+<p>已新增 <code>ExportJob</code> 在 <code>apps/api/src/exports/exportJob.ts</code>，在現有的 BullMQ 上排隊 <code>media-tasks</code> 有專門的佇列 <code>export</code> 職位名稱。遷移 <code>0121_export_jobs</code> 與計畫的模式完全匹配（狀態枚舉， <code>requested_by</code>, <code>審核_id</code>, <code>format</code>).</p>
+</div>
+</div>
+<div class="entry t-plan" data-t="plan">
+<div class="ts">14:18</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">計畫確認</span><span class="ts-mobile">14:18</span>
+<h3>步驟 2 — <code>POST /api/v1/審核s/:id/export</code> 終點</h3>
+<p>請求驗證重用了 zod 模式 <code>apps/api/src/validation/</code> 按照計畫指定。 <code>format</code> 接受 <code>mp4-burnin | csv | bundle</code>。退貨 <code>202</code> 有工作 ID；每個計畫的輪詢端點推遲到步驟 6。</p>
+</div>
+</div>
+<div class="entry t-disc" data-t="disc">
+<div class="ts">14:29</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">發現</span><span class="ts-mobile">14:29</span>
+<h3><code>Review.duration_ms</code> 是非規範化的並且偶爾是陳舊的</h3>
+<p>三場比賽回顧 <code>duration_ms</code> 這與來源資產的探測資料不一致（看起來重新上傳永遠不會刷新它）。匯出讀取持續時間自 <code>MediaAsset.probe.duration</code> 相反 - 同樣的方法 <code>playbackManifest.ts</code> 已經需要了。沒有計畫改變，只是為以後接觸這個的人指出陷阱。</p>
+</div>
+</div>
+<div class="entry t-dev" data-t="dev">
+<div class="ts">14:41</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">偏離 1（共 4 個）</span><span class="ts-mobile">14:41</span>
+<h3>舊版annotation並不總是具有幀時間戳</h3>
+<div class="devgrid">
+<div class="row"><div class="k">計畫說了什麼</div><div class="v">每個annotation都有一個 <code>frame_ts</code>;老化渲染器可以將它們全部排序並放置在時間軸上。</div></div>
+<div class="row"><div class="k">程式碼揭示了什麼</div><div class="v">~12% 的行 <code>annotations</code> 早於遷徙 <code>0087</code> 並有 <code>frame_ts = NULL</code> - 在每幀annotation出現之前，它們是一般性的留言。</div></div>
+<div class="row chosen"><div class="k">保守的選擇</div><div class="v">從視頻老化中排除空時間戳annotation；將它們包含在 CSV sidecar 中 <code>frame_ts</code> 留空和一個 <code>legacy_comment</code> 標誌。匯出包中不會默默地刪除任何內容。</div></div>
+<div class="row"><div class="k">重訪</div><div class="v">可以從以下位置插入時間戳 <code>created_at</code> 抵消審核會議的影響——決定這是否足夠誠實，可以在影片中展示。</div></div>
+</div>
+</div>
+</div>
+<div class="entry t-plan" data-t="plan">
+<div class="ts">15:05</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">計畫確認</span><span class="ts-mobile">15:05</span>
+<h3>步驟 3 — 透過 ffmpeg 進行annotation燒錄 <code>drawtext</code>/<code>drawbox</code>，按計畫</h3>
+<p>過濾圖產生器 <code>apps/worker/src/exports/burnin.ts</code>。該計畫的每個annotation覆蓋視窗（<code>enable='between(t,a,b)'</code>）工作；針對 40 個annotation的壓力裝置進行了驗證 - 在工作實例類別上即時渲染時間為 1.4 倍，在計畫的 2 倍預算內。</p>
+</div>
+</div>
+<div class="entry t-dev" data-t="dev">
+<div class="ts">15:22</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">偏離 2（共 4）</span><span class="ts-mobile">15:22</span>
+<h3>佇列往返 <code>Date</code> 作為字串的對象</h3>
+<div class="devgrid">
+<div class="row"><div class="k">計畫說了什麼</div><div class="v"><code>ExportJobPayload.requestedAt: Date</code>，傳遞給工人並與留言進行比較 <code>updated_at</code> 檢測過時的匯出。</div></div>
+<div class="row"><div class="k">程式碼揭示了什麼</div><div class="v">BullMQ JSON 將有效負載序列化到 Redis 中，因此worker收到 ISO 字串，而不是 <code>Date</code>。過時性比較默默地強制並在單元測試中通過，但在整合運行中的重新交付作業中失敗。</div></div>
+<div class="row chosen"><div class="k">保守的選擇</div><div class="v">以有線格式輸入有效負載（<code>requestedAt: string</code> ISO-8601)，在工作邊界處解析一次 <code>exportConsumer.ts</code>。沒有自訂序列化器。</div></div>
+<div class="row"><div class="k">重訪</div><div class="v">其他 <code>media-tasks</code> 有效負載可能具有相同的潛在錯誤—作業有效負載的共用 zod 編解碼器將解決此類問題。</div></div>
+</div>
+</div>
+</div>
+<div class="entry t-dev" data-t="dev">
+<div class="ts">15:48</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">偏離 3 of 4</span><span class="ts-mobile">15:48</span>
+<h3>Zip 串流媒體已經存在——放棄了計畫 <code>archiver</code> 依賴性</h3>
+<div class="devgrid">
+<div class="row"><div class="k">計畫說了什麼</div><div class="v">新增 <code>archiver</code> 將匯出套件（視訊 + CSV + 縮圖）建置為 S3 的 zip 串流。</div></div>
+<div class="row"><div class="k">程式碼揭示了什麼</div><div class="v"><code>packages/media/src/zipStream.ts</code> 已經實作了具有背壓處理的串流 zip——它為批量資源下載功能提供了支持，並且自 3 月以來一直在生產。</div></div>
+<div class="row chosen"><div class="k">保守的選擇</div><div class="v">重複使用 <code>zipStream.ts</code> 按原樣。減少了一種依賴性，捆綁包匯出繼承了與批量下載相同的經過測試的反壓行為。</div></div>
+<div class="row"><div class="k">重訪</div><div class="v"><code>zipStream</code> 住在 <code>packages/media</code> 但現在被兩個功能使用——值得推廣 <code>packages/shared</code> 在清理過程中。</div></div>
+</div>
+</div>
+</div>
+<div class="entry t-disc" data-t="disc">
+<div class="ts">16:07</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">發現</span><span class="ts-mobile">16:07</span>
+<h3>Websocket 進度通道約定已存在</h3>
+<p>轉碼管道發出 <code>media:progress:{assetId}</code> 事件。遵循相同的約定—匯出排放 <code>export:progress:{jobId}</code> ——這樣前端就可以重複使用 <code>useProgressChannel()</code> 來自 <code>apps/web/src/hooks/</code> 該計畫所描繪的不是投票使用者介面。也保留輪詢端點作為後備。</p>
+</div>
+</div>
+<div class="entry t-dev" data-t="dev">
+<div class="ts">16:20</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">偏離 4（共 4 個）</span><span class="ts-mobile">16:20</span>
+<h3>來賓審閱者可以查看留言，但無法下載資產</h3>
+<div class="devgrid">
+<div class="row"><div class="k">計畫說了什麼</div><div class="v">匯出權限=留言級ACL：任何可以開啟留言的人都可以匯出它。</div></div>
+<div class="row"><div class="k">程式碼揭示了什麼</div><div class="v">workspace級別 <code>guest_審核er</code> 角色授予審閱權限 <code>can_download_assets = false</code> — 客戶使用它讓外部利害關係人發表留言，而無需將媒體帶離現場。僅審核 ACL 的檢查可以讓訪客透過匯出來洩露來源影片。</div></div>
+<div class="row chosen"><div class="k">保守的選擇</div><div class="v">出口退貨 <code>403</code> 為了 <code>guest_審核er</code> 跨所有格式，鏡像現有的資產下載簽入 <code>assetAccess.ts</code>。最嚴格的辯護閱讀。</div></div>
+<div class="row"><div class="k">重訪</div><div class="v">可以說，客人仍然應該獲得 CSV（僅annotation，無媒體）。這是一個產品調用，不是我的——記錄在下面。</div></div>
+</div>
+</div>
+</div>
+<div class="entry t-human" data-t="human">
+<div class="ts">16:33</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">人類的待辦事項</span><span class="ts-mobile">16:33</span>
+<h3>決定客座審稿者匯出政策</h3>
+<p>目前的行為（來自偏離 4）：客人得到 <code>403</code> 在每種匯出格式上。如果你希望訪客匯出不含媒體的annotation CSV，則需要進行約 10 行更改 <code>exportPolicy.ts</code> 加上一項測試 - 但它改變了「無法下載資產」對客戶的含義，因此這應該由你決定。既不阻止合併，也不阻止 QA。</p>
+</div>
+</div>
+<div class="entry t-human" data-t="human">
+<div class="ts">16:51</div>
+<div class="rail"><span class="node"></span></div>
+<div class="body">
+<span class="badge">人類的待辦事項</span><span class="ts-mobile">16:51</span>
+<h3>確認匯出捆綁包的保留視窗</h3>
+<p>該計畫沒有指定產生的捆綁包的 TTL。我把它們放在下面 <code>exports/</code> S3 前綴具有 7 天生命週期規則，匹配共享連結到期時間 — 保守，客戶可見的承諾不會更長。但如果合約或資料保留政策另有規定，則生命週期規則 <code>infra/s3.tf</code> 是要更改的一行。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="next">
+<div class="label">折回計畫中</div>
+<h2>這對嘗試 #2 有何改變</h2>
+<p class="sub">三行貼到下一個計畫或提示中，這樣下次運行就不會重新發現今天的驚喜。</p>
+<button class="copybtn" id="copyNext">複製重點</button>
+<ol id="nextList">
+<li><strong>預先說明遺留資料的警告：</strong> 約 12% 的annotation（遷移前-0087）為空 <code>frame_ts</code>。在實作開始之前決定 interpolate-vs-sidecar，而不是在建置中期的 14:41。</li>
+<li><strong>將佇列有效負載指定為線路類型：</strong> BullMQ 透過 JSON 進行往返，因此有效負載介面應使用 ISO 字串，切勿使用 <code>Date</code> — 以及一個共享的 zod 編解碼器 <code>media-tasks</code> 有效負載將使整個錯誤類別退役。</li>
+<li><strong>在新增相依性之前清點現有實用程式：</strong> <code>zipStream.ts</code> 和 <code>useProgressChannel()</code> 兩者都存在並且都擊敗了計畫的版本。在計畫範本中新增「搜尋現有技術」步驟，並在下一個功能涉及 ACL 之前確定來賓審核者匯出策略。</li>
+</ol>
+</div>
+<footer>
+  屬於 <a href="index.html">了解你的未知</a> — 部落格文章的搭配範例。
+ </footer>
+</div>
+<script>
+(function () {
+ // ── copy buttons ──
+ function wireCopy(btnId, getText) {
+  var btn = document.getElementById(btnId);
+  var original = btn.textContent;
+  btn.addEventListener('click', function () {
+   var text = getText();
+   function done() {
+    btn.textContent = 'Copied';
+    btn.classList.add('done');
+    setTimeout(function () {
+     btn.textContent = original;
+     btn.classList.remove('done');
+    }, 1600);
+   }
+   if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, function () { fallback(text); done(); });
+   } else {
+    fallback(text); done();
+   }
+  });
+ }
+ function fallback(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.應用程式endChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+ }
+
+ wireCopy('copyPrompt', function () {
+  return "在建置匯出功能時保留實作筆記文件。如果你遇到迫使你偏離計畫的極端情況，請選擇保守選項，將其記錄在「偏離」下，然後繼續進行。";
+ });
+
+ wireCopy('copyNext', function () {
+  var items = document.querySelectorAll('#nextList li');
+  var out = [];
+  items.forEach(function (li, i) { out.push((i + 1) + '. ' + li.textContent.replace(/\s+/g, ' ').trim()); });
+  return out.join('\n');
+ });
+
+ // ── filter chips ──
+ var chips = document.querySelectorAll('.chip');
+ var entries = document.querySelectorAll('.entry');
+ function markRailEnds() {
+  var visible = Array.原型.filter.call(entries, function (e) {
+   return !e.classList.contains('hidden');
+  });
+  entries.forEach(function (e) {
+   e.classList.remove('rail-first', 'rail-last');
+  });
+  if (visible.length) {
+   visible[0].classList.add('rail-first');
+   visible[visible.length - 1].classList.add('rail-last');
+  }
+ }
+ chips.forEach(function (chip) {
+  chip.addEventListener('click', function () {
+   chips.forEach(function (c) { c.classList.remove('on'); });
+   chip.classList.add('on');
+   var f = chip.getAttribute('data-f');
+   entries.forEach(function (e) {
+    var t = e.getAttribute('data-t');
+    var show = (f === 'all') || (f === 'dev' && t === 'dev') || (f === 'human' && t === 'human');
+    e.classList.toggle('hidden', !show);
+   });
+   markRailEnds();
+  });
+ });
+ markRailEnds();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,742 @@
+ 版權所有 2026 Anthropic PBC · SPDX-許可證-識別碼：Apache-2.0 
+html
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>可調整的計畫－了解你的未知</title>
+<style>
+ :root {
+  --ivory: #FAF9F5;
+  --paper: #FFFFFF;
+  --slate: #141413;
+  --clay:  #D97757;
+  --clay-d: #B85C3E;
+  --oat:  #E3DACC;
+  --olive: #788C5D;
+  --g100:  #F0EEE6;
+  --g200:  #E6E3DA;
+  --g300:  #D1CFC5;
+  --g500:  #87867F;
+  --g700:  #3D3D3A;
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --sans: system-ui, -應用程式le-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+ }
+ * { box-sizing: border-box; }
+ body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--slate);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+ }
+ .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px 100px; }
+ @media (max-width: 480px) { .wrap { padding: 0 16px 80px; } }
+
+ /* ── page header ─────────────────────── */
+ header.page-head { padding: 56px 0 40px; position: relative; }
+ .eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g500);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+ }
+ .eyebrow::before { content: ""; width: 24px; height: 1.5px; background: var(--clay); flex-shrink: 0; }
+ a.back {
+  position: absolute; top: 60px; right: 0;
+  font-family: var(--mono); font-size: 12px;
+  color: var(--g500); text-decoration: none;
+ }
+ a.back:hover { color: var(--clay); }
+ @media (max-width: 640px) { a.back { position: static; display: inline-block; margin-bottom: 16px; } }
+ h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(32px, 5vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  margin: 0 0 14px;
+ }
+ .lede { font-size: 16.5px; color: var(--g700); max-width: 640px; margin: 0 0 32px; }
+
+ /* 提示詞 box */
+ .提示詞-card {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 22px 26px 24px;
+  position: relative;
+ }
+ .提示詞-card .p-label {
+  font-family: var(--mono); font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px;
+ }
+ .提示詞-card .p-label::before { content: ""; width: 24px; height: 1.5px; background: var(--clay); }
+ .提示詞-card blockquote {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17.5px;
+  line-height: 1.5;
+  color: var(--slate);
+  max-width: 62ch;
+ }
+ button.copy-btn {
+  position: absolute; top: 18px; right: 20px;
+  font-family: var(--mono); font-size: 11.5px;
+  background: var(--g100); color: var(--g700);
+  border: 1.5px solid var(--g300); border-radius: 8px;
+  padding: 5px 12px; cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+ }
+ button.copy-btn:hover { border-color: var(--clay); color: var(--clay-d); }
+ button.copy-btn.copied { background: var(--olive); border-color: var(--olive); color: #fff; }
+ @media (max-width: 640px) {
+  button.copy-btn { position: static; margin-top: 14px; }
+ }
+
+ /* divider row */
+ .produced {
+  display: flex; align-items: center; gap: 16px;
+  margin: 48px 0 36px;
+  font-family: var(--mono); font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--g500); white-space: nowrap;
+ }
+ .produced::before, .produced::after { content: ""; height: 1px; background: var(--g300); flex: 1; }
+
+ /* ══ THE ARTIFACT ══════════════════════ */
+ .產物 {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 34px 38px 40px;
+ }
+ @media (max-width: 640px) { .產物 { padding: 22px 18px 28px; } }
+
+ .產物 h2.plan-title {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(24px, 3.6vw, 32px);
+  letter-spacing: -0.015em;
+  margin: 0 0 4px;
+ }
+ .plan-sub { font-size: 14px; color: var(--g500); margin: 0 0 20px; }
+ .plan-sub code { font-family: var(--mono); font-size: 12.5px; background: var(--g100); border-radius: 5px; padding: 1px 6px; }
+
+ /* chips */
+ .chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 22px; }
+ .chip {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 13px; color: var(--g700);
+  background: var(--g100); border: 1.5px solid var(--g200);
+  border-radius: 999px; padding: 6px 16px;
+ }
+ .chip .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--g500); }
+ .chip .v { font-weight: 600; color: var(--slate); }
+ .chip .v.risk { color: var(--clay-d); }
+
+ /* sort banner */
+ .sort-banner {
+  background: var(--oat);
+  border: 1.5px solid var(--g300);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 0 0 40px;
+  font-size: 14.5px;
+  color: var(--g700);
+  display: flex; gap: 14px; align-items: flex-start;
+ }
+ .sort-banner .glyph {
+  font-family: var(--mono); font-size: 15px; line-height: 1.35;
+  color: var(--clay-d); white-space: pre; flex-shrink: 0;
+  padding-top: 1px;
+ }
+ .sort-banner strong { color: var(--slate); }
+
+ /* section chrome inside 產物 */
+ .plan-sec { margin: 0 0 46px; }
+ .plan-sec:last-of-type { margin-bottom: 0; }
+ .sec-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+ .sec-letter {
+  font-family: var(--mono); font-size: 13px; font-weight: 600;
+  background: var(--slate); color: var(--ivory);
+  width: 26px; height: 26px; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+ }
+ .sec-letter.soft { background: var(--g300); color: var(--g700); }
+ .sec-head h3 {
+  font-family: var(--serif); font-weight: 500;
+  font-size: 22px; letter-spacing: -0.01em; margin: 0;
+ }
+ .sec-head .likelihood {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; border-radius: 6px; padding: 3px 9px;
+ }
+ .likelihood.hi { background: var(--clay); color: #fff; }
+ .likelihood.lo { background: var(--g100); color: var(--g500); border: 1px solid var(--g200); }
+ .sec-intro { font-size: 14px; color: var(--g500); margin: 0 0 22px; max-width: 66ch; }
+
+ h4.sub {
+  font-family: var(--mono); font-size: 12px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--g500); margin: 34px 0 14px;
+  display: flex; align-items: center; gap: 10px;
+ }
+ h4.sub::before { content: ""; width: 16px; height: 1.5px; background: var(--clay); }
+ h4.sub:first-of-type { margin-top: 0; }
+
+ /* ── schema diagram ── */
+ .schema-wrap { display: grid; grid-template-columns: minmax(0, 340px) 1fr; gap: 22px; align-items: start; }
+ @media (max-width: 720px) { .schema-wrap { grid-template-columns: 1fr; } }
+
+ .table-box {
+  border: 1.5px solid var(--slate);
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--paper);
+ }
+ .table-box .t-name {
+  background: var(--slate); color: var(--ivory);
+  padding: 8px 14px; font-size: 12.5px; letter-spacing: 0.03em;
+ }
+ .table-box .t-name .new-badge {
+  float: right; background: var(--olive); color: #fff;
+  font-size: 9.5px; letter-spacing: 0.1em; border-radius: 4px;
+  padding: 2px 6px; margin-top: 1px;
+ }
+ .col-row {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--g200);
+  color: var(--g700);
+ }
+ .col-row .cn { color: var(--slate); }
+ .col-row .ct { color: var(--g500); white-space: nowrap; }
+ .col-row.flag {
+  background: #FBF1EC;
+  border-left: 3px solid var(--clay);
+  padding-left: 11px;
+ }
+ .col-row.flag .cn { color: var(--clay-d); font-weight: 600; }
+ .col-row.alt-note {
+  background: var(--g100);
+  color: var(--g500);
+  font-style: italic;
+  border-left: 3px solid var(--g300);
+  padding-left: 11px;
+  display: block;
+ }
+ .fk { color: var(--g500); font-size: 11px; }
+
+ /* variant switching */
+ [data-variant="main"] .v-alt { display: none; }
+ [data-variant="alt"] .v-main { display: none; }
+
+ .choice-card {
+  border: 1.5px solid var(--g300);
+  border-radius: 12px;
+  padding: 16px 18px 18px;
+  margin-bottom: 14px;
+  background: var(--ivory);
+ }
+ .choice-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+ .choice-flag {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em;
+  background: var(--clay); color: #fff;
+  border-radius: 6px; padding: 3px 8px;
+ }
+ .choice-head .ch-title { font-weight: 600; font-size: 14.5px; }
+ button.alt-toggle {
+  margin-left: auto;
+  font-family: var(--mono); font-size: 11.5px;
+  background: var(--paper); color: var(--clay-d);
+  border: 1.5px solid var(--clay); border-radius: 8px;
+  padding: 5px 12px; cursor: pointer;
+  transition: background .15s;
+ }
+ button.alt-toggle:hover { background: #FBF1EC; }
+ @media (max-width: 560px) { button.alt-toggle { margin-left: 0; } }
+ .choice-body { font-size: 13.5px; color: var(--g700); }
+ .choice-body .pick-label {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--olive); margin-bottom: 3px;
+ }
+ .choice-body .pick-label.alt-l { color: var(--clay-d); }
+ .choice-body ul { margin: 8px 0 0; padding-left: 18px; }
+ .choice-body li { margin-bottom: 4px; }
+ .choice-body li::marker { color: var(--g500); }
+ .tradeoff { color: var(--g500); font-size: 12.5px; margin-top: 8px; }
+ .tradeoff strong { color: var(--clay-d); font-weight: 600; }
+
+ /* ── code blocks with margin notes ── */
+ .code-grid { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 18px; align-items: start; margin-bottom: 22px; }
+ @media (max-width: 720px) { .code-grid { grid-template-columns: 1fr; } }
+ .code-block {
+  background: var(--slate);
+  border-radius: 10px;
+  padding: 16px 0;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--g200);
+ }
+ .code-block .cl-line { padding: 0 18px; white-space: pre; }
+ .code-block .cl-line.flagged {
+  background: rgba(217,119,87,0.16);
+  border-left: 3px solid var(--clay);
+  padding-left: 15px;
+ }
+ .code-block .cm { color: #8a8a82; }
+ .code-block .kw { color: #E8B4A0; }
+ .code-block .ty { color: #C7CBA3; }
+ .code-block .st { color: #D9C7A7; }
+ .code-block .fnum {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  background: var(--clay); color: #fff; border-radius: 50%;
+  width: 15px; height: 15px; line-height: 15px; text-align: center;
+  margin-left: 10px; vertical-align: 1px;
+ }
+ .margin-notes { display: flex; flex-direction: column; gap: 12px; }
+ .m-note {
+  font-size: 12.5px; color: var(--g700);
+  background: var(--g100); border: 1px solid var(--g200);
+  border-radius: 10px; padding: 10px 12px;
+ }
+ .m-note .n-num {
+  display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 700;
+  background: var(--clay); color: #fff; border-radius: 50%;
+  width: 15px; height: 15px; line-height: 15px; text-align: center;
+  margin-right: 7px; vertical-align: 1px;
+ }
+ .m-note code { font-family: var(--mono); font-size: 11.5px; background: var(--paper); border: 1px solid var(--g200); border-radius: 4px; padding: 0 4px; }
+
+ /* ── UX flow strip ── */
+ .flow-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-bottom: 8px; }
+ @media (max-width: 720px) { .flow-strip { grid-template-columns: 1fr 1fr; gap: 18px 0; } }
+ @media (max-width: 420px) { .flow-strip { grid-template-columns: 1fr; } }
+ .flow-step { position: relative; padding: 0 18px 0 0; }
+ .flow-step + .flow-step { padding-left: 18px; }
+ .flow-step:not(:last-child)::after {
+  content: "→";
+  position: absolute; right: -1px; top: 34px;
+  color: var(--g500); font-size: 15px;
+  transform: translateX(50%);
+ }
+ @media (max-width: 720px) {
+  .flow-step:nth-child(2)::after { display: none; }
+  .flow-step { padding: 0 14px 0 0; }
+ }
+ @media (max-width: 420px) { .flow-step::after { display: none !important; } .flow-step { padding: 0; } }
+ .fs-num {
+  font-family: var(--mono); font-size: 11px; color: var(--g500);
+  margin-bottom: 6px;
+ }
+ .fs-card {
+  border: 1.5px solid var(--g300); border-radius: 10px;
+  background: var(--ivory); padding: 12px 13px;
+  min-height: 108px;
+ }
+ .fs-card.weak { border: 1.5px dashed var(--clay); background: #FBF1EC; }
+ .fs-card .fs-t { font-weight: 600; font-size: 13.5px; margin-bottom: 4px; }
+ .fs-card .fs-d { font-size: 12px; color: var(--g500); line-height: 1.45; }
+ .weak-tag {
+  display: inline-block; font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  background: var(--clay); color: #fff; border-radius: 5px;
+  padding: 2px 7px; margin-bottom: 6px;
+ }
+ .flow-note { font-size: 13px; color: var(--g700); background: var(--g100); border-left: 3px solid var(--clay); border-radius: 0 8px 8px 0; padding: 10px 14px; margin-top: 16px; max-width: 64ch; }
+
+ /* ── sequencing timeline ── */
+ .seq { list-style: none; margin: 0; padding: 0; }
+ .seq li {
+  display: grid; grid-template-columns: 30px 1fr auto; gap: 12px;
+  align-items: baseline;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--g200);
+  font-size: 14px;
+ }
+ .seq li:last-child { border-bottom: none; }
+ .seq .s-num {
+  font-family: var(--mono); font-size: 12px; color: var(--paper);
+  background: var(--g500); border-radius: 6px;
+  width: 22px; height: 22px; display: inline-flex;
+  align-items: center; justify-content: center;
+  position: relative; top: 3px;
+ }
+ .seq .s-body strong { font-weight: 600; }
+ .seq .s-body .dep { color: var(--g500); font-size: 12.5px; }
+ .seq .s-est { font-family: var(--mono); font-size: 12px; color: var(--g500); white-space: nowrap; }
+ @media (max-width: 480px) { .seq li { grid-template-columns: 30px 1fr; } .seq .s-est { grid-column: 2; } }
+
+ /* ── mechanical details ── */
+ details.mech {
+  border: 1.5px solid var(--g300);
+  border-radius: 12px;
+  background: var(--g100);
+ }
+ details.mech summary {
+  cursor: pointer;
+  padding: 14px 18px;
+  font-size: 14px; font-weight: 600;
+  list-style: none;
+  display: flex; align-items: center; gap: 10px;
+ }
+ details.mech summary::-webkit-details-marker { display: none; }
+ details.mech summary::before {
+  content: "▸"; color: var(--g500); font-size: 13px;
+  transition: transform .15s; display: inline-block;
+ }
+ details.mech[open] summary::before { transform: rotate(90deg); }
+ details.mech summary .count {
+  font-family: var(--mono); font-size: 11px; color: var(--g500);
+  font-weight: 400; margin-left: auto;
+ }
+ .mech-list { list-style: none; margin: 0; padding: 4px 18px 16px 40px; }
+ .mech-list li {
+  font-size: 13.5px; color: var(--g700);
+  padding: 6px 0; border-top: 1px solid var(--g200);
+ }
+ .mech-list li:first-child { border-top: none; }
+ .mech-list code { font-family: var(--mono); font-size: 12px; background: var(--paper); border: 1px solid var(--g200); border-radius: 4px; padding: 0 5px; }
+ .mech-list .why { color: var(--g500); font-size: 12px; }
+
+ /* ── quick-reply card ── */
+ .tweak-card {
+  margin-top: 44px;
+  border: 1.5px solid var(--slate);
+  border-radius: 14px;
+  background: var(--ivory);
+  padding: 22px 24px 24px;
+ }
+ .tweak-card h3 {
+  font-family: var(--serif); font-weight: 500; font-size: 21px;
+  letter-spacing: -0.01em; margin: 0 0 4px;
+ }
+ .tweak-card > p { font-size: 13.5px; color: var(--g500); margin: 0 0 16px; }
+ .tweak-row {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--paper); border: 1.5px solid var(--g300);
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;
+ }
+ .tweak-row:last-child { margin-bottom: 0; }
+ .tweak-row .t-num {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  background: var(--oat); color: var(--g700); border-radius: 6px;
+  padding: 2px 8px; flex-shrink: 0; margin-top: 2px;
+ }
+ .tweak-row .t-body { font-size: 13.5px; color: var(--g700); }
+ .tweak-row .t-body .t-q { font-family: var(--serif); font-style: italic; color: var(--slate); }
+ .tweak-row button.copy-btn { position: static; flex-shrink: 0; margin: 0 0 0 auto; }
+ @media (max-width: 560px) { .tweak-row { flex-wrap: wrap; } .tweak-row button.copy-btn { margin-left: 40px; } }
+
+ /* footer */
+ footer.site-foot {
+  margin-top: 56px; padding-top: 24px;
+  border-top: 1.5px solid var(--g300);
+  font-size: 13.5px; color: var(--g500);
+ }
+ footer.site-foot a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+ footer.site-foot a:hover { text-decoration-color: var(--clay); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="page-head">
+<a class="back" href="index.html">← 所有範例</a>
+<div class="eyebrow">了解你的未知 · 實作前</div>
+<h1>可調整的計畫</h1>
+<p class="lede">不是按執行順序排序的計畫，而是要求按可能性排序的計畫 <em>你</em> 改變每個部分——所以值得你注意的決定首先浮出水面，而機械工作則沉入底部。</p>
+<div class="提示詞-card">
+<div class="p-label">提示詞</div>
+<blockquote id="the-提示詞">請用 HTML 格式撰寫一份實作計畫，但請將我最可能調整的決策放在最前面：包含資料模型的變更、新的型別介面（type interfaces）以及任何面向使用者的部分。至於機械式的重構工作則放在最後面，那部分我信任你的處理。</blockquote>
+<button class="copy-btn" onclick="copyText(this, document.getElementById('the-提示詞').textContent)">複製提示詞</button>
+</div>
+</header>
+<div class="produced">Claude 產出的內容</div>
+ ═══════════神器═══════════ 
+<div class="產物">
+<h2 class="plan-title">實作方案：annotation匯出</h2>
+<p class="plan-sub">Acme · 將留言的annotation匯出為可分享的 PDF 或 CSV · 分支 <code>feat/annotation-export</code></p>
+<div class="chips">
+<div class="chip"><span class="k">努力</span><span class="v">~2.5 開發日</span></div>
+<div class="chip"><span class="k">文件被觸及</span><span class="v">13（3 個新）</span></div>
+<div class="chip"><span class="k">風險</span><span class="v risk">低-中</span></div>
+<div class="chip"><span class="k">遷移</span><span class="v">1、新增劑</span></div>
+</div>
+<div class="sort-banner">
+<div class="glyph">↑ 調整
+↓ 信任</div>
+<div><strong>該計畫按調整的可能性而不是執行順序排序。</strong> 從上到下閱讀 = 最值得你首先關注的內容。 A 部分保留所有判斷； B 部分是建造順序； C 部分是機械性的，可以安全地完全跳過。</div>
+</div>
+ ── A 節 ──────────────────────── 
+<section class="plan-sec">
+<div class="sec-head">
+<span class="sec-letter">一個</span>
+<h3>你可能想要改變的決定</h3>
+<span class="likelihood hi">高調整可能性</span>
+</div>
+<p class="sec-intro">我在三個方面做出了你可能不同意的判斷。每個標記的選擇都顯示了我考慮的替代方案 - 切換以進行比較。</p>
+<h4 class="sub">A1·資料模型－新 <span style="text-transform:none">annotation_exports</span> 表</h4>
+<div class="schema-wrap">
+<div class="table-box" data-variant="main" id="schema">
+<div class="t-name">annotation_exports <span class="new-badge">新</span></div>
+<div class="col-row"><span class="cn">編號</span><span class="ct">uuid PK</span></div>
+<div class="col-row"><span class="cn">審核_id</span><span class="ct">uuid <span class="fk">→ 留言</span></span></div>
+<div class="col-row"><span class="cn">requested_by</span><span class="ct">uuid <span class="fk">→ 使用者</span></span></div>
+<div class="col-row"><span class="cn">狀態</span><span class="ct">枚舉（排隊、渲染、就緒、失敗）</span></div>
+<div class="col-row"><span class="cn">選項</span><span class="ct">jsonb</span></div>
+<div class="col-row flag v-main"><span class="cn">快照①</span><span class="ct">jsonb</span></div>
+<div class="col-row alt-note v-alt">① 無快照列 — 渲染器 JOIN <b>annotation</b> 即時渲染時</div>
+<div class="col-row flag v-main2"><span class="cn">產物_url ②</span><span class="ct">文字為空</span></div>
+<div class="col-row flag v-main2"><span class="cn">rendered_at</span><span class="ct">時間戳為空</span></div>
+<div class="col-row alt-note v-alt2">② 無儲存神器 — <b>GET /exports/:id/下載</b> 按需渲染</div>
+<div class="col-row"><span class="cn">created_at</span><span class="ct">時間戳</span></div>
+</div>
+<div>
+<div class="choice-card" data-variant="main" id="c1">
+<div class="choice-head">
+<span class="choice-flag">選擇①</span>
+<span class="ch-title">快照與即時加入</span>
+<button class="alt-toggle" onclick="toggleChoice(1)">看替代方案 →</button>
+</div>
+<div class="choice-body">
+<div class="v-main">
+<div class="pick-label">計畫的選擇——非規範化快照</div>
+        將annotation有效負載複製到 <b>快照 jsonb</b> 當請求匯出時。匯出的是審核記錄 <i>在那一刻</i>：以後的編輯、解決和刪除不會重寫歷史記錄。
+        <ul>
+<li>即使審核已存檔，匯出仍然有效。</li>
+<li>渲染器讀取一行 — 沒有 N+1 跨行 <b>annotation</b> + <b>annotation_replies</b>.</li>
+</ul>
+<p class="tradeoff"><strong>Cost:</strong> 嚴格審核時約為 40 KB/行；相對於活動線程，快照可能會變得陳舊。</p>
+</div>
+<div class="v-alt">
+<div class="pick-label alt-l">替代方案 - 在渲染時即時加入</div>
+        跳過快照；渲染器加入 <b>annotation</b> 當文件生成時。出口始終反映當前狀態。
+        <ul>
+<li>沒有重複資料，沒有陳舊問題。</li>
+<li>重新下載相同的匯出可以產生 <i>不同的</i> 文件－對於審計用途來說令人驚訝。</li>
+</ul>
+<p class="tradeoff"><strong>若符合以下條件，請選擇此選項：</strong> 出口是工作文件，而不是記錄。一行告訴我： <i>“使用即時加入。”</i></p>
+</div>
+</div>
+</div>
+<div class="choice-card" data-variant="main" id="c2">
+<div class="choice-head">
+<span class="choice-flag">選擇②</span>
+<span class="ch-title">儲存的產物與按需渲染</span>
+<button class="alt-toggle" onclick="toggleChoice(2)">看替代方案 →</button>
+</div>
+<div class="choice-body">
+<div class="v-main">
+<div class="pick-label">計畫的選擇 - 渲染一次，儲存在 blob 儲存中</div>
+        工作人員渲染 PDF/CSV 一次並寫入 <b>產物_url</b>。下載是一個簽名 URL redirect — 便宜、可緩存，並且可以與缺乏 Acme 帳戶的審閱者共享。
+        <p class="tradeoff"><strong>Cost:</strong> 要管理的 blob 生命週期；我會新增 30 天的 TTL 掃描（C 部分，第 6 項）。</p>
+</div>
+<div class="v-alt">
+<div class="pick-label alt-l">替代方案－在每次下載時渲染</div>
+        沒有儲存檔案： <b>GET /exports/:id/下載</b> 串流新鮮渲染。零儲存空間，但每次下載大型留言約 2-4 秒，並且沒有可共享的公共連結。
+        <p class="tradeoff"><strong>若符合以下條件，請選擇此選項：</strong> 儲存/合規性規則使儲存的副本變得尷尬。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<h4 class="sub">A2·新型介面</h4>
+<div class="code-grid">
+<div class="code-block"><!--
+--><div class="cl-line"><span class="cm">// src/types/exports.ts（新）</span></div><!--
+--><div class="cl-line"><span class="kw">匯出介面</span> <span class="ty">出口請求</span> {</div><!--
+--><div class="cl-line"> 審核Id: <span class="ty">留言ID</span>;</div><!--
+--><div class="cl-line flagged"> format: <span class="st">'pdf'</span> | <span class="st">'csv'</span>;<span class="fnum">1</span></div><!--
+--><div class="cl-line flagged"> range: <span class="st">‘全部’</span> | <span class="st">“未解決”</span> | <span class="ty">時間碼範圍</span>;<span class="fnum">2</span></div><!--
+--><div class="cl-line"> includeReplies: <span class="kw">布林值</span>;  <span class="cm">// 預設為真</span></div><!--
+--><div class="cl-line flagged"> includeDrawings: <span class="kw">布林值</span>; <span class="cm">// 預設為假</span><span class="fnum">3</span></div><!--
+--><div class="cl-line">}</div><!--
+--><div class="cl-line"> </div><!--
+--><div class="cl-line"><span class="kw">匯出介面</span> <span class="ty">annotation快照</span> {</div><!--
+--><div class="cl-line"> id: <span class="ty">annotationID</span>;</div><!--
+--><div class="cl-line"> timecode: <span class="kw">字串</span>;     <span class="cm">// "00:04:12.08"</span></div><!--
+--><div class="cl-line"> 作者：{ ID： <span class="ty">使用者ID</span>;姓名： <span class="kw">字串</span> };</div><!--
+--><div class="cl-line"> body: <span class="kw">字串</span>;</div><!--
+--><div class="cl-line flagged"> state: <span class="st">‘打開’</span> | <span class="st">‘解決’</span>;<span class="fnum">4</span></div><!--
+--><div class="cl-line"> replies: <span class="ty">回覆快照</span>[];</div><!--
+--><div class="cl-line">}</div><!--
+--></div>
+<div class="margin-notes">
+<div class="m-note"><span class="n-num">1</span>從 PDF + CSV 開始。新增 <code>'xlsx'</code> 或 <code>'srt'</code> 後來是一名聯合成員+一名渲染器。</div>
+<div class="m-note"><span class="n-num">2</span><code>TimecodeRange</code> 讓製作人只匯出一個場景的annotation。如果沒有人要求這樣做，則將其剪掉可節省約 ½ 天的時間。</div>
+<div class="m-note"><span class="n-num">3</span>繪圖（框架標記）光柵化為 PDF。預設情況下關閉，因為它會使渲染時間增加三倍。</div>
+<div class="m-note"><span class="n-num">4</span>故意將內部 5 狀態機降為匯出中的 2 狀態。告訴我審稿者是否需要查看 <code>'wont_fix'</code>.</div>
+</div>
+</div>
+<h4 class="sub">A3·使用者體驗流程</h4>
+<div class="flow-strip">
+<div class="flow-step">
+<div class="fs-num">步驟1</div>
+<div class="fs-card">
+<div class="fs-t">匯出按鈕</div>
+<div class="fs-d">審閱工具列溢位選單中的新項目，位於「複製共用連結」旁。</div>
+</div>
+</div>
+<div class="flow-step">
+<div class="fs-num">步驟2</div>
+<div class="fs-card">
+<div class="fs-t">選項模態</div>
+<div class="fs-d">格式、範圍、包含回應、包含繪圖。重複使用 <b>模態形式</b> 從設定。</div>
+</div>
+</div>
+<div class="flow-step">
+<div class="fs-num">步驟3</div>
+<div class="fs-card weak">
+<span class="weak-tag">該計畫最薄弱的部分</span>
+<div class="fs-t">後台工作+吐司</div>
+<div class="fs-d">在工作人員中匯出渲染；使用者會收到「我們會通知你」的提示，然後可以離開。</div>
+</div>
+</div>
+<div class="flow-step">
+<div class="fs-num">步驟4</div>
+<div class="fs-card">
+<div class="fs-t">就緒通知</div>
+<div class="fs-d">響鈴通知+下載連結；也列在檢視 → 匯出標籤下。</div>
+</div>
+</div>
+</div>
+<p class="flow-note"><b>為什麼第 3 步很弱：</b> 大多数导出将在 3 秒内完成，因此“一劳永逸”可能会让人觉得有点大材小用，但包含 400 个注释的绘图审核需要大约 20 秒，这太长了，无法阻止。混合方式（最多等待 4 秒，然後回退通知）效果更好，並且會增加大約半天的時間。你的電話。</p>
+</section>
+ ── B 節 ──────────────────────── 
+<section class="plan-sec">
+<div class="sec-head">
+<span class="sec-letter">乙</span>
+<h3>定序</h3>
+<span class="likelihood lo">執行順序</span>
+</div>
+<p class="sec-intro">我實際建構它的順序。每一步在 CI 上都是綠色的；在第 5 步翻轉標誌之前，不會傳送任何使用者可見的內容。</p>
+<ol class="seq">
+<li><span class="s-num">1</span><span class="s-body"><strong>遷移+模型。</strong> <span class="dep">創建 <b>annotation_exports</b>，連接 Sequelize 模型、工廠、夾具。</span></span><span class="s-est">0.5d</span></li>
+<li><span class="s-num">2</span><span class="s-body"><strong>類型+請求驗證。</strong> <span class="dep">A2 中的所有內容，以及 zod 模式 <b>POST /api/審核s/:id/exports</b>.</span></span><span class="s-est">0.25d</span></li>
+<li><span class="s-num">3</span><span class="s-body"><strong>Renderers.</strong> <span class="dep">首先是 CSV（簡單），然後透過現有的 PDF <b>@acme/render</b> service.</span></span><span class="s-est">1天</span></li>
+<li><span class="s-num">4</span><span class="s-body"><strong>Worker 作業 + blob 上傳。</strong> <span class="dep">排隊開啟 <b>exports.render</b>;然後重試×3 <b>狀態=失敗</b>.</span></span><span class="s-est">0.25d</span></li>
+<li><span class="s-num">5</span><span class="s-body"><strong>UI：選單項目、模式、Toast、匯出標籤。</strong> <span class="dep">旗幟後面 <b>export_annotations</b>.</span></span><span class="s-est">0.5d</span></li>
+<li><span class="s-num">6</span><span class="s-body"><strong>向 Acme 團隊進行測試、文件、標記展示。</strong></span><span class="s-est">0.25d</span></li>
+</ol>
+</section>
+ ── C 節 ────────────────────────── 
+<section class="plan-sec">
+<div class="sec-head">
+<span class="sec-letter soft">C</span>
+<h3>機械工作（相信我）</h3>
+<span class="likelihood lo">調整可能性低</span>
+</div>
+<p class="sec-intro">重構並處理功能需求。這裡沒有任何判斷力——故意倒塌。</p>
+<details class="mech">
+<summary>無聊但必要 <span class="count">8 項任務 · 總計約 0.5 天，併入上述估算中</span></summary>
+<ul class="mech-list">
+<li>萃取物 <code>AnnotationSerializer</code> 來自 <code>api/annotations.ts</code> 進入 <code>lib/serializers/</code> 這樣出口工人就可以重複使用它。 <span class="why">純粹的舉動，沒有行為改變。</span></li>
+<li>完成 <code>CommentMarker</code> → <code>AnnotationMarker</code> 重新命名 — 3 個檔案仍匯入已棄用的別名。</li>
+<li>新增 <code>annotation_exports</code> 到夾具載入器和 CI 資料庫重置腳本。</li>
+<li>註冊 <code>exports.render</code> 在 <code>workers/index.ts</code> 並將其新增到死信警報列表中。</li>
+<li>創建功能標誌 <code>export_annotations</code> 在 <code>flags.yaml</code>，預設關閉。</li>
+<li>新增每晚對過期匯出 blob 進行 TTL 掃描 <code>jobs/cleanup.ts</code> （僅當選項 ② 保持原樣時）。</li>
+<li>延伸 <code>openapi.yaml</code> 使用兩個新端點並重新產生客戶端。</li>
+<li>將時間碼格式化助手從 <code>player/utils.ts</code> 到 <code>lib/time.ts</code> — PDF 渲染器需要它，並且不應從播放器包中匯入。</li>
+</ul>
+</details>
+</section>
+ ── 快速回覆──────────────────── 
+<div class="tweak-card">
+<h3>調整這三點</h3>
+<p>你可以發送的最高影響力的回覆。複製一份、編輯、發送——我會修改計畫。</p>
+<div class="tweak-row">
+<span class="t-num">①</span>
+<div class="t-body"><span class="t-q">“將選擇①切換為即時加入——這裡匯出的是工作文件，而不是記錄。”</span></div>
+<button class="copy-btn" onclick="copyText(this, 'Switch Choice ① to live join — exports here are working docs, not records.')">複製</button>
+</div>
+<div class="tweak-row">
+<span class="t-num">②</span>
+<div class="t-body"><span class="t-q">“從 ExportRequest 中刪除 TimecodeRange；沒有人要求按場景匯出。”</span></div>
+<button class="copy-btn" onclick="copyText(this, 'Cut TimecodeRange from ExportRequest; nobody has asked for per-scene export.')">複製</button>
+</div>
+<div class="tweak-row">
+<span class="t-num">③</span>
+<div class="t-body"><span class="t-q">“執行第 3 步的混合操作：在線等待最多 4 秒，然後回退以進行通知。”</span></div>
+<button class="copy-btn" onclick="copyText(this, 'Do the hybrid for step 3: wait up to 4s inline, then fall back to notify.')">複製</button>
+</div>
+</div>
+</div><!-- /產物 -->
+<footer class="site-foot">
+  屬於 <a href="index.html">了解你的未知</a> — 部落格文章的搭配範例。
+ </footer>
+</div>
+<script>
+ function copyText(btn, text) {
+  var done = function () {
+   var orig = btn.dataset.orig || btn.textContent;
+   btn.dataset.orig = orig;
+   btn.textContent = 'Copied';
+   btn.classList.add('copied');
+   setTimeout(function () {
+    btn.textContent = orig;
+    btn.classList.remove('copied');
+   }, 1600);
+  };
+  var fallback = function () {
+   var ta = document.createElement('textarea');
+   ta.value = text;
+   ta.setAttribute('readonly', '');
+   ta.style.position = 'fixed';
+   ta.style.opacity = '0';
+   document.body.應用程式endChild(ta);
+   ta.select();
+   try { document.execCommand('copy'); done(); } catch (e) {}
+   document.body.removeChild(ta);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+   navigator.clipboard.writeText(text).then(done, fallback);
+  } else {
+   fallback();
+  }
+ }
+
+ // Choice toggles: swap both the choice card body and the matching schema rows.
+ function toggleChoice(n) {
+  var card = document.getElementById('c' + n);
+  var toAlt = card.getAttribute('data-variant') === 'main';
+  var next = toAlt ? 'alt' : 'main';
+  card.setAttribute('data-variant', next);
+  card.querySelector('.alt-toggle').textContent = toAlt ? "– 返回計畫選擇" : "查看替代方案 —";
+  // schema rows for choice n use classes v-main/v-alt (n=1) or v-main2/v-alt2 (n=2)
+  var suffix = n === 1 ? '' : '2';
+  var schema = document.getElementById('schema');
+  schema.querySelectorAll('.v-main' + suffix).forEach(function (el) {
+   el.style.display = toAlt ? 'none' : '';
+  });
+  schema.querySelectorAll('.v-alt' + suffix).forEach(function (el) {
+   el.style.display = toAlt ? 'block' : 'none';
+  });
+ }
+
+ // Initialize schema alt rows hidden (choice 2 rows aren't covered by the
+ // [data-variant] CSS on #schema since both choices share one diagram).
+ document.querySelectorAll('#schema .v-alt, #schema .v-alt2').forEach(function (el) {
+  el.style.display = 'none';
+ });
+ document.querySelectorAll('#schema .v-main2').forEach(function (el) {
+  el.style.display = '';
+ });
+</script>
+</body>
+</html>

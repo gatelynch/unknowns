@@ -1,0 +1,638 @@
+ 版權所有 2026 Anthropic PBC · SPDX-許可證-識別碼：Apache-2.0 
+html
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>訪談－了解你的未知</title>
+<style>
+ :root {
+  --ivory: #FAF9F5;
+  --paper: #FFFFFF;
+  --slate: #141413;
+  --clay:  #D97757;
+  --clay-d: #B85C3E;
+  --oat:  #E3DACC;
+  --olive: #788C5D;
+  --g100:  #F0EEE6;
+  --g200:  #E6E3DA;
+  --g300:  #D1CFC5;
+  --g500:  #87867F;
+  --g700:  #3D3D3A;
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --sans: system-ui, -應用程式le-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+ }
+ * { box-sizing: border-box; }
+ body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--slate);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+ }
+ .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px 100px; }
+
+ /* ── header ─────────────────────────── */
+ header { padding: 56px 0 8px; position: relative; }
+ .eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g500);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+ }
+ .eyebrow::before { content: ""; width: 24px; height: 1.5px; background: var(--clay); flex: none; }
+ .backlink {
+  position: absolute; top: 60px; right: 0;
+  font-family: var(--mono); font-size: 12px;
+  color: var(--g500); text-decoration: none;
+  letter-spacing: 0.04em;
+ }
+ .backlink:hover { color: var(--clay); }
+ h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(34px, 5vw, 50px);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  margin: 0 0 10px;
+ }
+ .lede { font-size: 16.5px; color: var(--g700); max-width: 640px; margin: 0 0 30px; }
+
+ /* ── 提示詞 box ─────────────────────── */
+ .提示詞box {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 22px 24px 20px;
+  position: relative;
+ }
+ .提示詞box .label {
+  font-family: var(--mono); font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 12px;
+ }
+ .提示詞box .label::before { content: ""; width: 24px; height: 1.5px; background: var(--clay); flex: none; }
+ .提示詞box blockquote {
+  margin: 0; padding: 0;
+  font-family: var(--serif); font-style: italic;
+  font-size: 17.5px; line-height: 1.5; color: var(--slate);
+  max-width: 46em;
+ }
+ .複製btn {
+  position: absolute; top: 18px; right: 18px;
+  font-family: var(--mono); font-size: 11.5px;
+  letter-spacing: 0.04em;
+  background: var(--g100); color: var(--g700);
+  border: 1.5px solid var(--g300); border-radius: 7px;
+  padding: 5px 11px; cursor: pointer;
+ }
+ .複製btn:hover { border-color: var(--clay); color: var(--clay-d); }
+ .複製btn.done { background: var(--olive); border-color: var(--olive); color: #fff; }
+
+ /* ── divider ────────────────────────── */
+ .divider {
+  display: flex; align-items: center; gap: 16px;
+  margin: 44px 0 30px;
+  font-family: var(--mono); font-size: 12px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--g500); white-space: nowrap;
+ }
+ .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--g300); }
+
+ /* ══ THE ARTIFACT ═════════════════════ */
+ .產物 {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  overflow: hidden;
+ }
+ .art-head {
+  padding: 16px 22px;
+  border-bottom: 1.5px solid var(--g200);
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  background: var(--g100);
+ }
+ .art-head .t { font-family: var(--serif); font-weight: 500; font-size: 17px; letter-spacing: -0.01em; }
+ .art-head .s { font-family: var(--mono); font-size: 11.5px; color: var(--g500); }
+
+ .art-body { display: grid; grid-template-columns: 216px 1fr; min-height: 480px; }
+ @media (max-width: 720px) { .art-body { grid-template-columns: 1fr; min-height: 0; } }
+
+ /* rail */
+ .rail {
+  border-right: 1.5px solid var(--g200);
+  padding: 20px 16px;
+  background: var(--ivory);
+ }
+ @media (max-width: 720px) {
+  .rail { border-right: none; border-bottom: 1.5px solid var(--g200); padding: 14px 16px; }
+ }
+ .rail .rail-label {
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--g500); margin-bottom: 12px;
+ }
+ .rail-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 8px; margin: 0 -8px;
+  border-radius: 8px;
+  font-size: 12.5px; color: var(--g500);
+  cursor: default;
+  border: none; background: none; width: calc(100% + 16px);
+  text-align: left; font-family: var(--sans);
+ }
+ .rail-item.done { color: var(--g700); cursor: pointer; }
+ .rail-item.done:hover { background: var(--g100); }
+ .rail-item.current { color: var(--slate); font-weight: 600; background: var(--g100); }
+ .rail-dot {
+  width: 11px; height: 11px; border-radius: 50%; flex: none;
+  border: 2px solid var(--dotc, var(--g300));
+  background: transparent;
+ }
+ .rail-item.done .rail-dot { background: var(--dotc); }
+ .rail-item.current .rail-dot { box-shadow: 0 0 0 3px var(--g200); }
+ .rail-item .rail-q { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+ .rail-item .tick { margin-left: auto; font-size: 11px; color: var(--olive); flex: none; }
+ .rail-meta {
+  margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--g200);
+  font-family: var(--mono); font-size: 11px; color: var(--g500); line-height: 1.8;
+ }
+ .rail-meta b { color: var(--g700); font-weight: 600; }
+ @media (max-width: 720px) {
+  .rail .rail-q, .rail .tick, .rail-meta, .rail .rail-label { display: none; }
+  .rail { display: flex; align-items: center; gap: 10px; }
+  .rail-item { width: auto; padding: 4px; margin: 0; }
+ }
+
+ /* stage */
+ .stage { padding: 28px 30px 30px; position: relative; }
+ @media (max-width: 720px) { .stage { padding: 22px 18px 24px; } }
+ .qcard { animation: qin .28s ease both; }
+ .qcard.leaving { animation: qout .18s ease both; }
+ @keyframes qin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+ @keyframes qout { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
+
+ .badge {
+  display: inline-block;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 5px;
+  color: #fff; background: var(--g500);
+  margin-bottom: 4px;
+ }
+ .qnum { font-family: var(--mono); font-size: 11.5px; color: var(--g500); margin-left: 10px; }
+ .qtext {
+  font-family: var(--serif); font-weight: 500;
+  font-size: clamp(20px, 3vw, 25px); line-height: 1.25;
+  letter-spacing: -0.012em;
+  margin: 10px 0 6px; max-width: 34em;
+ }
+ .why {
+  font-size: 13.5px; color: var(--g500); margin: 0 0 22px;
+  display: flex; gap: 8px; align-items: baseline;
+ }
+ .why::before { content: "↳"; color: var(--clay); flex: none; }
+
+ .opts { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+ @media (max-width: 620px) { .opts { grid-template-columns: 1fr; } }
+ .opt {
+  text-align: left;
+  background: var(--ivory);
+  border: 1.5px solid var(--g300);
+  border-radius: 11px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-family: var(--sans);
+  color: var(--slate);
+  transition: border-color .12s, background .12s, transform .12s;
+ }
+ .opt:hover { border-color: var(--clay); background: var(--paper); transform: translateY(-1px); }
+ .opt.picked { border-color: var(--clay); background: var(--paper); box-shadow: 0 0 0 3px rgba(217,119,87,.15); }
+ .opt .ot { font-weight: 600; font-size: 14.5px; display: block; margin-bottom: 3px; }
+ .opt .od { font-size: 12.5px; color: var(--g500); line-height: 1.45; display: block; }
+
+ .otherrow { display: flex; gap: 8px; margin-top: 12px; }
+ .otherrow input {
+  flex: 1; min-width: 0;
+  font-family: var(--sans); font-size: 14px;
+  padding: 10px 13px;
+  border: 1.5px solid var(--g300); border-radius: 9px;
+  background: var(--ivory); color: var(--slate);
+ }
+ .otherrow input::placeholder { color: var(--g500); }
+ .otherrow input:focus { outline: none; border-color: var(--clay); background: var(--paper); }
+ .otherrow button {
+  font-family: var(--mono); font-size: 12px;
+  padding: 0 16px; border-radius: 9px; cursor: pointer;
+  border: 1.5px solid var(--g300); background: var(--g100); color: var(--g700);
+ }
+ .otherrow button:hover { border-color: var(--clay); color: var(--clay-d); }
+
+ .navrow { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+ .backbtn {
+  font-family: var(--mono); font-size: 12px;
+  background: none; border: none; cursor: pointer;
+  color: var(--g500); padding: 6px 0;
+ }
+ .backbtn:hover { color: var(--clay-d); }
+ .backbtn[disabled] { visibility: hidden; }
+ .navhint { font-family: var(--mono); font-size: 11px; color: var(--g500); }
+
+ /* summary */
+ .sum-h { font-family: var(--serif); font-weight: 500; font-size: 24px; letter-spacing: -0.012em; margin: 4px 0 4px; }
+ .sum-sub { font-size: 14px; color: var(--g500); margin: 0 0 20px; }
+ .dtable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+ .dtable-scroll { overflow-x: auto; }
+ .dtable th {
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--g500); font-weight: 500;
+  text-align: left; padding: 8px 12px 8px 0;
+  border-bottom: 1.5px solid var(--g300);
+  white-space: nowrap;
+ }
+ .dtable td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--g200); vertical-align: top; }
+ .dtable tr:last-child td { border-bottom: none; }
+ .dtable .pill {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: #fff; padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+ }
+ .dtable .topic { color: var(--g500); white-space: nowrap; }
+ .dtable .dec { font-weight: 600; }
+ .dtable .redo {
+  font-family: var(--mono); font-size: 11px; color: var(--g500);
+  background: none; border: none; cursor: pointer; padding: 0;
+ }
+ .dtable .redo:hover { color: var(--clay-d); }
+
+ .genblock { margin-top: 26px; }
+ .genblock .gb-label {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+ }
+ .genblock .gb-label::before { content: ""; width: 18px; height: 1.5px; background: var(--clay); flex: none; }
+ .genwrap { position: relative; }
+ .genwrap pre {
+  margin: 0;
+  background: var(--slate);
+  color: var(--g200);
+  border-radius: 11px;
+  padding: 18px 20px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+ }
+ .genwrap .複製btn { top: 12px; right: 12px; background: var(--g700); border-color: var(--g700); color: var(--g300); }
+ .genwrap .複製btn:hover { color: var(--paper); border-color: var(--g500); }
+ .genwrap .複製btn.done { background: var(--olive); border-color: var(--olive); color: #fff; }
+ .restart {
+  margin-top: 18px;
+  font-family: var(--mono); font-size: 12px;
+  background: none; border: none; cursor: pointer;
+  color: var(--g500); padding: 0;
+ }
+ .restart:hover { color: var(--clay-d); }
+
+ footer {
+  margin-top: 56px; padding-top: 22px;
+  border-top: 1px solid var(--g300);
+  font-size: 13px; color: var(--g500);
+ }
+ footer a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+ footer a:hover { text-decoration-color: var(--clay); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="eyebrow">了解你的未知 · 實作前</div>
+<a class="backlink" href="index.html">← 所有範例</a>
+<h1>訪談</h1>
+<p class="lede">不要讓 Claude 猜測模糊需求。請它一次問你一個問題，並優先詢問那些會改變架構的問題。</p>
+<div class="提示詞box">
+<div class="label">提示詞</div>
+<button class="複製btn" id="複製Prompt">複製提示詞</button>
+<blockquote id="提示詞Text">請針對任何模糊不清的地方一次問我一個問題，並優先提出那些答案會改變架構的問題。</blockquote>
+</div>
+</header>
+<div class="divider">Claude 產出的內容</div>
+<div class="產物">
+<div class="art-head">
+<span class="t">annotation匯出——規格訪談</span>
+<span class="s">acme/web · 7 個開放問題 · 依爆炸半徑排序</span>
+</div>
+<div class="art-body">
+<nav aria-label="訪談進度" class="rail" id="rail"></nav>
+<div class="stage" id="stage"></div>
+</div>
+</div>
+<footer>屬於 <a href="index.html">了解你的未知</a> — 部落格文章的搭配範例。</footer>
+</div>
+<script>
+(function () {
+ "use strict";
+
+ var RADII = {
+  arch: { label: "架構", color: "var(--clay)" },
+  資料: { label: "資料模型",  color: "var(--clay-d)" },
+  ux:  { label: "UX",      color: "var(--olive)" },
+  pol:  { label: "修飾",    color: "var(--g500)" }
+ };
+
+ var QUESTIONS = [
+  {
+   id: "runtime",
+   radius: "arch",
+   short: "匯出在哪裡執行",
+   topic: "執行模型",
+   q: "匯出產生流程實際上應該在哪裡執行？",
+   why: "這會決定我們是否需要 job queue、通知路徑與 產物s bucket，或者完全不需要。其他所有東西都疊在這之上。",
+   opts: [
+    { t: "在 API request 中同步執行", d: "最簡單，但一個 2 小時影片、400 則留言的 審核 會超過 30 秒 gateway timeout。" },
+    { t: "透過既有 sidekiq queue 背景執行", d: "重用 proxy transcodes 的 jobs/export_worker 模式；需要一個「ready」通知。" },
+    { t: "完全在 client-side 從 annotations API 產生", d: "不需要新 backend，但格式會受限於瀏覽器能組裝的東西，之後也不會留下 support 可查的紀錄。" }
+   ]
+  },
+  {
+   id: "scope",
+   radius: "arch",
+   short: "匯出範圍",
+   topic: "單次匯出的單位",
+   q: "一次匯出的單位是什麼？",
+   why: "Project-level 匯出代表要跨影片 fan-out、pagination 與 manifest 格式，範圍積大約是 per-video 的 3 倍。",
+   opts: [
+    { t: "一次一支影片", d: "符合 審核 page 的心智模型；project export 目前只是點 N 次。" },
+    { t: "整個 project（所有影片）", d: "Meridian Post 帳號要求的形式；代表需要 zip bundling 與 per-video manifests。" },
+    { t: "使用者任意選取範圍", d: "最彈性、也最需要 UI；需要一個目前還不存在的 selection model。" }
+   ]
+  },
+  {
+   id: "drawings",
+   radius: "資料",
+   short: "包含繪圖嗎？",
+   topic: "繪圖 annotations",
+   q: "要匯出 frame drawings，還是只匯出文字留言？",
+   why: "繪圖以 canvas stroke JSON 存在 annotation_shapes；包含它們代表要 server-side rasterize，或輸出 raw vectors。",
+   opts: [
+    { t: "只匯出文字留言（v1）", d: "最快能交付；繪圖顯示成「[frame 4211 上的繪圖]」placeholder。" },
+    { t: "把繪圖 rasterize 成 PNG stills", d: "最適合 PDF reports；需要 headless render 步驟，thumbnail worker 接近但不完全相同。" },
+    { t: "包含 raw stroke JSON", d: "無損又便宜，但只對要重新匯入 Acme 的人有用。" }
+   ]
+  },
+  {
+   id: "timecode",
+   radius: "資料",
+   short: "時間戳格式",
+   topic: "時間戳表示方式",
+   q: "匯出檔裡應該如何表示 annotation timestamps？",
+   why: "我們儲存 milliseconds；剪輯師使用 SMPTE timecode。轉換需要來源 fps，但 3% legacy uploads 的 fps 是 null。",
+   opts: [
+    { t: "SMPTE timecode (HH:MM:SS:FF)", d: "What Resolve and Premiere expect; requires an fps backfill for legacy videos." },
+    { t: "純秒數 / milliseconds", d: "沒有轉換風險，但每個剪輯師都得手動轉，有些人會轉錯。" },
+    { t: "永遠兩欄都給", d: "檔案稍微變寬，但沒有人需要問哪個才是權威欄位。" }
+   ]
+  },
+  {
+   id: "formats",
+   radius: "ux",
+   short: "v1 格式",
+   topic: "匯出格式",
+   q: "v1 要交付哪些格式？",
+   why: "每種格式大多是獨立工作，但選擇會傳達這個功能是為誰做的：製片、剪輯師，或客戶。",
+   opts: [
+    { t: "只做 CSV", d: "pipeline 存在後，一個下午能完成；producers 可自行 pivot。" },
+    { t: "PDF 審核 report", d: "面向客戶、含 thumbnails 的 產物；只有在繪圖 rasterize 後才有意義。" },
+    { t: "NLE marker file (EDL / Resolve CSV)", d: "The power-user ask from the forum thread; timecode question becomes load-bearing." },
+    { t: "CSV + NLE markers，PDF 之後再做", d: "同時涵蓋 internal 與 編輯or workflows，又不被 rasterization 卡住。" }
+   ]
+  },
+  {
+   id: "access",
+   radius: "ux",
+   short: "誰可以匯出",
+   topic: "匯出權限",
+   q: "誰被允許匯出？",
+   why: "Guest 審核ers 使用未驗證 share links。如果他們能匯出，annotations 就會靜默離開權限邊界。",
+   opts: [
+    { t: "任何能觀看影片的人", d: "包含 share-link guests；規則最簡單，但資料外流面最大。" },
+    { t: "只限 project members", d: "Guests 仍可留言但不能 bulk-extract；UI 需要 disabled-state 解釋。" },
+    { t: "只限 owner 與 admins", d: "最保守；可能產生「可以幫我匯出嗎」的忙碌工作。" }
+   ]
+  },
+  {
+   id: "naming",
+   radius: "pol",
+   short: "檔案與命名",
+   topic: "檔案命名與 bundling",
+   q: "匯出檔要如何命名與打包？",
+   why: "純慣例問題，但交付後第一張 support ticket 通常都是「哪個檔案是哪個 cut」。",
+   opts: [
+    { t: "{project}_{video}_{date}.csv, flat", d: "Predictable and grep-able; long titles get truncated at 80 chars." },
+    { t: "Zip per export with a manifest.json", d: "One 產物 per export regardless / scope; slight friction for single-file cases." },
+    { t: "讓使用者在匯出時選擇", d: "為幾乎沒人會改的東西新增 settings surface。" }
+   ]
+  }
+ ];
+
+ var answers = new Array(QUESTIONS.length).fill(null); // {text, custom}
+ var current = 0;  // index, or QUESTIONS.length => summary
+ var rail = document.getElementById("rail");
+ var stage = document.getElementById("stage");
+
+ function answeredCount() {
+  return answers.filter(function (a) { return a !== null; }).length;
+ }
+
+ function esc(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+ }
+
+ function renderRail() {
+  var html = '<div class="rail-label">訪談進度</div>';
+  QUESTIONS.forEach(function (q, i) {
+   var r = RADII[q.radius];
+   var cls = "rail-item" + (i === current ? " current" : "") + (answers[i] ? " done" : "");
+   html += '<button type="button" class="' + cls + '" 資料-i="' + i + '" style="--dotc:' + r.color + '"' +
+    (answers[i] ? '' : ' tabindex="-1"') + '>' +
+    '<span class="rail-dot"></span><span class="rail-q">' + esc(q.short) + '</span>' +
+    (answers[i] ? '<span class="tick">✓</span>' : '') + '</button>';
+  });
+  html += '<div class="rail-meta"><b>' + answeredCount() + '</b> / 7 已回答<br>' +
+   '<span style="color:var(--clay)">●</span> 架構 &nbsp;' +
+   '<span style="color:var(--clay-d)">●</span> 資料<br>' +
+   '<span style="color:var(--olive)">●</span> ux &nbsp;' +
+   '<span style="color:var(--g500)">●</span> 修飾</div>';
+  rail.innerHTML = html;
+  rail.querySelectorAll(".rail-item.done").forEach(function (el) {
+   el.addEventListener("click", function () { go(parseInt(el.資料set.i, 10)); });
+  });
+ }
+
+ function render問題() {
+  var q = QUESTIONS[current];
+  var r = RADII[q.radius];
+  var picked = answers[current];
+  var html = '<div class="qcard">' +
+   '<span class="badge" style="background:' + r.color + '">' + esc(r.label) + '</span>' +
+   '<span class="qnum">問題 ' + (current + 1) + ' / ' + QUESTIONS.length + '</span>' +
+   '<h2 class="qtext">' + esc(q.q) + '</h2>' +
+   '<p class="why">' + esc(q.why) + '</p>' +
+   '<div class="opts">';
+  q.opts.forEach(function (o, oi) {
+   var isPicked = picked && !picked.custom && picked.text === o.t;
+   html += '<button type="button" class="opt' + (isPicked ? ' picked' : '') + '" 資料-oi="' + oi + '">' +
+    '<span class="ot">' + esc(o.t) + '</span><span class="od">' + esc(o.d) + '</span></button>';
+  });
+  html += '</div>' +
+   '<div class="otherrow">' +
+   '<input type="text" id="otherInput" placeholder="其他 — 輸入你自己的答案…" value="' +
+    (picked && picked.custom ? esc(picked.text) : '') + '">' +
+   '<button type="button" id="otherGo">回答 ↵</button></div>' +
+   '<div class="navrow">' +
+   '<button type="button" class="backbtn" id="backBtn"' + (current === 0 ? ' disabled' : '') + '>← 上一題</button>' +
+   '<span class="navhint">選一張卡片繼續</span>' +
+   '</div></div>';
+  stage.innerHTML = html;
+
+  stage.querySelectorAll(".opt").forEach(function (el) {
+   el.addEventListener("click", function () {
+    var o = q.opts[parseInt(el.資料set.oi, 10)];
+    answers[current] = { text: o.t, custom: false };
+    el.classList.add("picked");
+    renderRail();
+    setTimeout(function () { go(current + 1); }, 240);
+   });
+  });
+  var input = stage.querySelector("#otherInput");
+  function submitOther() {
+   var v = input.value.trim();
+   if (!v) { input.focus(); return; }
+   answers[current] = { text: v, custom: true };
+   renderRail();
+   go(current + 1);
+  }
+  stage.querySelector("#otherGo").addEventListener("click", submitOther);
+  input.addEventListener("keydown", function (e) { if (e.key === "Enter") submitOther(); });
+  stage.querySelector("#backBtn").addEventListener("click", function () { go(current - 1); });
+ }
+
+ function buildFollowupPrompt() {
+  var lines = [
+   "這是我們在訪談中決定的內容 — 請實作",
+   "annotation-export 功能，並遵守這些限制：",
+   ""
+  ];
+  QUESTIONS.forEach(function (q, i) {
+   var a = answers[i];
+   lines.push((i + 1) + ". " + q.topic + ": " + (a ? a.text : "（未回答 — 請自行判斷）") +
+    (a && a.custom ? " [我的用語 — 不清楚請先問]" : ""));
+  });
+  lines.push("");
+  lines.push("Treat the 架構 and 資料-model decisions (1–4) as fixed.");
+  lines.push("如果 5–7 有任何內容與它們衝突，寫 code 前先標出來。");
+  lines.push("先給短計畫，再開始實作。");
+  return lines.join("\n");
+ }
+
+ function renderSummary() {
+  var rows = "";
+  QUESTIONS.forEach(function (q, i) {
+   var r = RADII[q.radius];
+   var a = answers[i];
+   rows += "<tr>" +
+    '<td><span class="pill" style="background:' + r.color + '">' + esc(r.label) + '</span></td>' +
+    '<td class="topic">' + esc(q.topic) + '</td>' +
+    '<td class="dec">' + (a ? esc(a.text) + (a.custom ? ' <span style="font-weight:400;color:var(--g500)">（你的用語）</span>' : '') : '<span style="color:var(--g500)">—</span>') + '</td>' +
+    '<td><button type="button" class="redo" 資料-i="' + i + '">編輯</button></td>' +
+    "</tr>";
+  });
+  stage.innerHTML = '<div class="qcard">' +
+   '<span class="badge" style="background:var(--olive)">訪談完成</span>' +
+   '<h2 class="sum-h">七個決策，零個假設。</h2>' +
+   '<p class="sum-sub">下面每個答案，否則都會在實作過程中被靜默猜測。</p>' +
+   '<div class="dtable-scroll"><table class="dtable"><thead><tr>' +
+   '<th>影響範圍</th><th>問題</th><th>決策</th><th></th>' +
+   '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+   '<div class="genblock">' +
+   '<div class="gb-label">產生的後續提示詞</div>' +
+   '<div class="genwrap"><button type="button" class="複製btn" id="複製Gen">複製</button>' +
+   '<pre id="genPre">' + esc(buildFollowupPrompt()) + '</pre></div>' +
+   '</div>' +
+   '<button type="button" class="restart" id="restartBtn">↺ 重新開始</button>' +
+   '</div>';
+
+  stage.querySelectorAll(".redo").forEach(function (el) {
+   el.addEventListener("click", function () { go(parseInt(el.資料set.i, 10)); });
+  });
+  wireCopy(stage.querySelector("#複製Gen"), function () { return buildFollowupPrompt(); });
+  stage.querySelector("#restartBtn").addEventListener("click", function () {
+   answers = new Array(QUESTIONS.length).fill(null);
+   go(0);
+  });
+ }
+
+ function go(idx) {
+  var card = stage.querySelector(".qcard");
+  var doRender = function () {
+   current = idx;
+   renderRail();
+   if (current >= QUESTIONS.length) renderSummary();
+   else render問題();
+  };
+  if (card) {
+   card.classList.add("leaving");
+   setTimeout(doRender, 160);
+  } else {
+   doRender();
+  }
+ }
+
+ function wireCopy(btn, getText) {
+  btn.addEventListener("click", function () {
+   var text = getText();
+   var done = function () {
+    var orig = btn.textContent;
+    btn.textContent = "copied ✓";
+    btn.classList.add("done");
+    setTimeout(function () { btn.textContent = orig; btn.classList.remove("done"); }, 1600);
+   };
+   if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+   } else {
+    fallbackCopy(text); done();
+   }
+  });
+ }
+ function fallbackCopy(text) {
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.應用程式endChild(ta);
+  ta.select();
+  try { document.execCommand("複製"); } catch (e) {}
+  document.body.removeChild(ta);
+ }
+
+ wireCopy(document.getElementById("複製Prompt"), function () {
+  return document.getElementById("提示詞Text").textContent;
+ });
+
+ renderRail();
+ render問題();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,780 @@
+ 版權所有 2026 Anthropic PBC · SPDX-許可證-識別碼：Apache-2.0 
+html
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>接線前先做模擬－了解你的未知</title>
+<style>
+ :root {
+  --ivory: #FAF9F5;
+  --paper: #FFFFFF;
+  --slate: #141413;
+  --clay:  #D97757;
+  --clay-d: #B85C3E;
+  --oat:  #E3DACC;
+  --olive: #788C5D;
+  --g100:  #F0EEE6;
+  --g200:  #E6E3DA;
+  --g300:  #D1CFC5;
+  --g500:  #87867F;
+  --g700:  #3D3D3A;
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --sans: system-ui, -應用程式le-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+ }
+ * { box-sizing: border-box; }
+ body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--slate);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+ }
+ .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px 100px; }
+
+ /* ── header ─────────────────────────── */
+ header { padding: 56px 0 8px; position: relative; }
+ .eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g500);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+ }
+ .eyebrow::before { content: ""; width: 24px; height: 1.5px; background: var(--clay); flex: none; }
+ .backlink {
+  position: absolute; top: 60px; right: 0;
+  font-family: var(--mono); font-size: 12px;
+  color: var(--g500); text-decoration: none;
+  letter-spacing: 0.04em;
+ }
+ .backlink:hover { color: var(--clay); }
+ h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(32px, 5vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 0 0 10px;
+ }
+ .lede { font-size: 16.5px; color: var(--g700); max-width: 640px; margin: 0 0 30px; }
+
+ /* ── 提示詞 box ─────────────────────── */
+ .提示詞box {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 20px 24px 22px;
+  position: relative;
+  margin-bottom: 44px;
+ }
+ .提示詞box .label {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 10px;
+ }
+ .提示詞box blockquote {
+  margin: 0; padding: 0 0 0 18px;
+  border-left: 3px solid var(--oat);
+  font-family: var(--serif); font-style: italic;
+  font-size: 17.5px; line-height: 1.5; color: var(--slate);
+  max-width: 720px;
+ }
+ .copybtn {
+  position: absolute; top: 16px; right: 16px;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.04em;
+  background: var(--g100); color: var(--g700);
+  border: 1.5px solid var(--g300); border-radius: 8px;
+  padding: 5px 11px; cursor: pointer;
+ }
+ .copybtn:hover { border-color: var(--g500); }
+ .copybtn.done { background: var(--olive); border-color: var(--olive); color: #fff; }
+
+ /* ── divider ────────────────────────── */
+ .divider {
+  display: flex; align-items: center; gap: 16px;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--g500); margin: 0 0 32px;
+ }
+ .divider::before, .divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--g300);
+ }
+
+ /* ═══ THE ARTIFACT ═══════════════════ */
+ .產物 {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 22px;
+ }
+ @media (max-width: 480px) { .產物 { padding: 14px; } }
+ .art-head {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+ }
+ .art-title { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--g500); }
+ .art-title b { color: var(--slate); font-weight: 600; }
+
+ /* segmented control */
+ .seg {
+  display: inline-flex; flex-wrap: wrap;
+  background: var(--g100);
+  border: 1.5px solid var(--g300);
+  border-radius: 10px; padding: 3px; gap: 3px;
+ }
+ .seg button {
+  font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+  border: none; background: transparent; color: var(--g700);
+  padding: 6px 12px; border-radius: 7px; cursor: pointer;
+  white-space: nowrap;
+ }
+ .seg button:hover { color: var(--slate); }
+ .seg button.on {
+  background: var(--paper); color: var(--slate);
+  box-shadow: 0 1px 3px rgba(20,20,19,.12);
+ }
+ .seg button.on .dot { background: var(--clay); }
+ .seg .dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--g300); margin-right: 7px; vertical-align: 1px;
+ }
+
+ .variant-note {
+  font-size: 13px; color: var(--g500);
+  margin: 0 0 14px; min-height: 20px;
+ }
+ .variant-note b { color: var(--g700); font-weight: 600; }
+
+ /* ── stage ──────────────────────────── */
+ .stagewrap { position: relative; }
+ .stage {
+  position: relative;
+  background: #1C1B18;
+  border-radius: 12px;
+  overflow: hidden;
+  a規格說明t-ratio: 16 / 9;
+  min-height: 220px;
+ }
+ .stage svg.scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+ .chip-tc, .chip-paused {
+  position: absolute; top: 10px;
+  font-family: var(--mono); font-size: 11px;
+  padding: 3px 9px; border-radius: 6px;
+  background: rgba(20,20,19,.72); color: var(--ivory);
+  letter-spacing: 0.06em; z-index: 3;
+ }
+ .chip-tc { left: 10px; }
+ .chip-paused { right: 10px; color: var(--oat); }
+ .chip-paused::before { content: "❚❚ "; font-size: 9px; }
+
+ /* seekbar */
+ .seekbar {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 26px 14px 10px; z-index: 3;
+  background: linear-gradient(to top, rgba(20,20,19,.78), rgba(20,20,19,0));
+ }
+ .seek-track { position: relative; height: 4px; border-radius: 2px; background: rgba(250,249,245,.25); }
+ .seek-buf  { position: absolute; left: 0; top: 0; bottom: 0; width: 62%; border-radius: 2px; background: rgba(250,249,245,.35); }
+ .seek-play { position: absolute; left: 0; top: 0; bottom: 0; width: 34%; border-radius: 2px; background: var(--clay); }
+ .seek-head {
+  position: absolute; left: 34%; top: 50%;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--clay); border: 2px solid var(--ivory);
+  transform: translate(-50%, -50%);
+ }
+ .seek-pins { position: absolute; left: 14px; right: 14px; bottom: 20px; height: 0; }
+ .seek-pin {
+  position: absolute; bottom: -3px; width: 7px; height: 7px;
+  border-radius: 2px; transform: translateX(-50%) rotate(45deg);
+  background: var(--oat); opacity: .9;
+ }
+
+ /* ── toolbar ────────────────────────── */
+ .toolbar {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(28,27,24,.92);
+  border: 1.5px solid rgba(250,249,245,.16);
+  box-shadow: 0 8px 28px rgba(20,20,19,.35);
+  padding: 8px 12px;
+  z-index: 5;
+  color: var(--ivory);
+  max-width: 100%;
+ }
+ .tb-group { display: flex; align-items: center; gap: 4px; }
+ .tb-sep { width: 1px; align-self: stretch; margin: 2px 0; background: rgba(250,249,245,.18); flex: none; }
+
+ .tool {
+  width: 34px; height: 34px; flex: none;
+  display: grid; place-items: center;
+  border: 1.5px solid transparent; border-radius: 9px;
+  background: transparent; color: var(--g300);
+  cursor: pointer; padding: 0;
+ }
+ .tool:hover { color: var(--ivory); background: rgba(250,249,245,.08); }
+ .tool.on { background: var(--clay); border-color: var(--clay-d); color: #fff; }
+ .tool svg { width: 17px; height: 17px; display: block; }
+
+ .swatches { display: flex; align-items: center; gap: 6px; }
+ .swatch {
+  width: 18px; height: 18px; flex: none;
+  border-radius: 50%; cursor: pointer; padding: 0;
+  border: 2px solid rgba(250,249,245,.25);
+ }
+ .swatch.on { border-color: var(--ivory); box-shadow: 0 0 0 2px rgba(217,119,87,.55); }
+
+ .strokes { display: flex; align-items: center; gap: 4px; }
+ .stroke {
+  width: 26px; height: 26px; flex: none;
+  display: grid; place-items: center;
+  background: transparent; border: 1.5px solid transparent;
+  border-radius: 7px; cursor: pointer; padding: 0;
+ }
+ .stroke i { display: block; border-radius: 50%; background: var(--g300); }
+ .stroke.s1 i { width: 4px; height: 4px; }
+ .stroke.s2 i { width: 7px; height: 7px; }
+ .stroke.s3 i { width: 11px; height: 11px; }
+ .stroke:hover i { background: var(--ivory); }
+ .stroke.on { background: rgba(250,249,245,.12); border-color: rgba(250,249,245,.3); }
+ .stroke.on i { background: var(--ivory); }
+
+ .ann-chip {
+  font-family: var(--mono); font-size: 11px; white-space: nowrap;
+  background: rgba(227,218,204,.16); color: var(--oat);
+  border: 1px solid rgba(227,218,204,.3);
+  border-radius: 999px; padding: 3px 10px;
+ }
+ .cmt-btn {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+  background: transparent; color: var(--g300);
+  border: 1.5px solid rgba(250,249,245,.22); border-radius: 9px;
+  padding: 6px 11px; cursor: pointer; white-space: nowrap;
+ }
+ .cmt-btn:hover { color: var(--ivory); border-color: rgba(250,249,245,.45); }
+ .cmt-btn.on { background: var(--oat); color: var(--slate); border-color: var(--oat); }
+ .cmt-btn svg { width: 14px; height: 14px; }
+
+ /* variant: floating pill (default) */
+ .stagewrap.v-pill .toolbar {
+  position: absolute; left: 50%; bottom: 52px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  flex-wrap: nowrap;
+  width: max-content; max-width: calc(100% - 20px);
+  overflow-x: auto; scrollbar-width: none;
+ }
+ .stagewrap.v-pill .toolbar::-webkit-scrollbar { display: none; }
+
+ /* variant: docked left rail */
+ .stagewrap.v-rail .toolbar {
+  position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+  border-radius: 14px;
+  padding: 10px 8px;
+  gap: 8px;
+  max-height: calc(100% - 20px);
+  overflow-y: auto; scrollbar-width: none;
+ }
+ .stagewrap.v-rail .toolbar::-webkit-scrollbar { display: none; }
+ .stagewrap.v-rail .tb-group { flex-direction: column; }
+ .stagewrap.v-rail .tb-sep { width: auto; height: 1px; align-self: stretch; margin: 0 2px; }
+ .stagewrap.v-rail .swatches { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+ .stagewrap.v-rail .strokes { flex-direction: column; }
+ .stagewrap.v-rail .ann-chip { writing-mode: initial; padding: 3px 6px; font-size: 10px; }
+ .stagewrap.v-rail .cmt-btn span { display: none; }
+ .stagewrap.v-rail .cmt-btn { padding: 8px; }
+ .stagewrap.v-rail .tool, .stagewrap.v-rail .stroke { width: 32px; height: 32px; }
+
+ /* variant: docked under seekbar */
+ .stagewrap.v-dock .toolbar {
+  position: static; transform: none;
+  margin-top: 10px;
+  border-radius: 12px;
+  background: var(--g700);
+  flex-wrap: wrap;
+  justify-content: center;
+ }
+ .stagewrap.v-dock .tb-sep { min-height: 22px; }
+
+ @media (max-width: 560px) {
+  .tool { width: 30px; height: 30px; }
+  .tool svg { width: 15px; height: 15px; }
+  .toolbar { gap: 7px; padding: 6px 9px; }
+  .stagewrap.v-pill .toolbar { bottom: 42px; }
+  .cmt-btn span { display: none; }
+  .cmt-btn { padding: 7px; }
+  .stagewrap.v-rail .swatches { grid-template-columns: 1fr; }
+  .stagewrap.v-rail .ann-chip { display: none; }
+ }
+
+ /* ── comment drawer ─────────────────── */
+ .drawer {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: min(272px, 78%);
+  background: rgba(250,249,245,.97);
+  border-left: 1.5px solid var(--g300);
+  transform: translateX(105%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  z-index: 6;
+  display: flex; flex-direction: column;
+  border-radius: 0 12px 12px 0;
+ }
+ .drawer.open { transform: translateX(0); }
+ .drawer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1.5px solid var(--g200);
+ }
+ .drawer-head h3 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: 15px; letter-spacing: -0.01em; }
+ .drawer-head .cnt { font-family: var(--mono); font-size: 11px; color: var(--g500); }
+ .drawer-close {
+  border: none; background: none; cursor: pointer;
+  font-size: 16px; line-height: 1; color: var(--g500); padding: 4px;
+ }
+ .drawer-close:hover { color: var(--slate); }
+ .drawer-body { flex: 1; overflow-y: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+ .cmt {
+  background: var(--paper);
+  border: 1.5px solid var(--g200);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font-size: 12.5px;
+ }
+ .cmt .who { display: flex; align-items: baseline; gap: 7px; margin-bottom: 3px; }
+ .cmt .av {
+  width: 18px; height: 18px; border-radius: 50%; flex: none;
+  display: grid; place-items: center; align-self: center;
+  font-size: 9px; font-weight: 700; color: #fff;
+ }
+ .cmt .nm { font-weight: 600; font-size: 12px; }
+ .cmt .tc { font-family: var(--mono); font-size: 10px; color: var(--clay); }
+ .cmt p { margin: 0; color: var(--g700); }
+ .cmt .pin { font-family: var(--mono); font-size: 10px; color: var(--g500); margin-top: 4px; }
+ .drawer-input {
+  margin: 0 12px 12px; padding: 8px 11px;
+  border: 1.5px solid var(--g300); border-radius: 9px;
+  font-size: 12.5px; color: var(--g500); background: var(--paper);
+  cursor: text;
+ }
+
+ .art-footnote {
+  margin: 14px 2px 0; font-size: 12.5px; color: var(--g500);
+ }
+ .art-footnote code { font-family: var(--mono); font-size: 11.5px; background: var(--g100); padding: 1px 5px; border-radius: 4px; }
+
+ /* ── open questions card ────────────── */
+ .questions {
+  margin-top: 28px;
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 22px 24px;
+ }
+ @media (max-width: 480px) { .questions { padding: 16px; } }
+ .questions .label {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--clay); margin-bottom: 6px;
+ }
+ .questions h2 {
+  font-family: var(--serif); font-weight: 500;
+  font-size: 22px; letter-spacing: -0.012em; margin: 0 0 4px;
+ }
+ .questions .sub { font-size: 13.5px; color: var(--g500); margin: 0 0 18px; }
+ .q { padding: 14px 0; border-top: 1.5px solid var(--g100); }
+ .q:first-of-type { border-top: 1.5px solid var(--g200); }
+ .q-text { font-size: 14.5px; margin: 0 0 9px; }
+ .q-text .qn {
+  font-family: var(--mono); font-size: 11px; color: var(--g500);
+  margin-right: 8px;
+ }
+ .q-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+ .chip {
+  font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+  background: var(--g100); color: var(--g700);
+  border: 1.5px solid var(--g300); border-radius: 999px;
+  padding: 5px 13px; cursor: pointer;
+ }
+ .chip:hover { border-color: var(--g500); }
+ .chip.on { background: var(--slate); border-color: var(--slate); color: var(--ivory); }
+ .chip .k {
+  font-family: var(--mono); font-size: 10.5px; color: var(--clay);
+  margin-right: 6px;
+ }
+ .chip.on .k { color: var(--oat); }
+
+ /* ── reply template ─────────────────── */
+ .reply {
+  margin-top: 18px;
+  background: var(--g100);
+  border: 1.5px solid var(--g200);
+  border-radius: 12px;
+  padding: 14px 16px;
+  position: relative;
+ }
+ .reply .label {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--g500); margin-bottom: 8px;
+ }
+ .reply pre {
+  margin: 0; font-family: var(--mono); font-size: 12px;
+  line-height: 1.7; color: var(--g700);
+  white-space: pre-wrap; word-break: break-word;
+ }
+ .reply pre .picked { color: var(--slate); font-weight: 600; }
+ .reply pre .blank { color: var(--clay); }
+
+ /* ── footer ─────────────────────────── */
+ footer {
+  margin-top: 64px; padding-top: 20px;
+  border-top: 1.5px solid var(--g300);
+  font-size: 13px; color: var(--g500);
+ }
+ footer a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+ footer a:hover { text-decoration-color: var(--clay); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<a class="backlink" href="index.html">← 所有範例</a>
+<div class="eyebrow">了解你的未知 · 實作前</div>
+<h1>接線前先做模擬</h1>
+<p class="lede">在 Claude 接觸真正的程式碼庫之前，先要求一個可丟棄的 HTML 模擬。你會在點擊它的那一刻，更早發現自己真正想要什麼。</p>
+<div class="提示詞box">
+<div class="label">提示詞</div>
+<button class="copybtn" id="copyPrompt">複製提示詞</button>
+<blockquote id="提示詞Text">在開始撰寫任何程式邏輯之前，先建立一個單一的 HTML 檔案，用假資料模擬新的編輯器工具列。我希望在你動到實際的應用程式之前，先針對版面配置進行評估。</blockquote>
+</div>
+</header>
+<div class="divider">Claude 產出的內容</div>
+ ═══神器═══ 
+<div class="產物">
+<div class="art-head">
+<div class="art-title"><b>艾克梅</b> · 框架annotation工具列 · 模擬，沒有觸及真正的程式碼</div>
+<div aria-label="Toolbar layout variant" class="seg" id="variantSeg" role="tablist">
+<button class="on" data-v="v-pill"><span class="dot"></span>浮丸</button>
+<button data-v="v-rail"><span class="dot"></span>停靠左導軌</button>
+<button data-v="v-dock"><span class="dot"></span>在搜尋欄下</button>
+</div>
+</div>
+<p class="variant-note" id="variantNote"><b>漂浮的藥丸，底部中心。</b> 懸停在搜尋欄上方；播放時隱藏。最接近 Loom/Frame.io 發布的內容。</p>
+<div class="stagewrap v-pill" id="stagewrap">
+<div class="stage">
+ 假暫停幀 
+<svg aria-label="Paused video frame: sunset ride teaser, 00:41 — logo lockup annotated" class="scene" preservea規格說明tratio="xMidYMid slice" viewbox="0 0 640 360">
+<!-- sky -->
+<rect fill="#2A2722" height="360" width="640" x="0" y="0"></rect>
+<rect fill="#3D3A32" height="230" width="640" x="0" y="0"></rect>
+<circle cx="470" cy="118" fill="#D97757" r="46"></circle>
+<circle cx="470" cy="118" fill="none" r="46" stroke="#E3DACC" stroke-opacity=".25" stroke-width="10"></circle>
+<!-- far hills -->
+<path d="M0 205 Q 110 150 230 198 T 470 192 T 640 178 V 360 H 0 Z" fill="#4A4A3C"></path>
+<!-- near hills -->
+<path d="M0 250 Q 150 205 300 246 T 640 238 V 360 H 0 Z" fill="#5B6647"></path>
+<path d="M0 292 Q 200 258 400 288 T 640 280 V 360 H 0 Z" fill="#788C5D"></path>
+<!-- road -->
+<path d="M270 360 L 315 240 L 331 240 L 410 360 Z" fill="#3D3D3A"></path>
+<path d="M322 240 L 322 268 M 328 282 L 332 310 M 336 326 L 342 356" fill="none" stroke="#E3DACC" stroke-linecap="round" stroke-opacity=".5" stroke-width="3"></path>
+<!-- rider silhouette -->
+<g fill="#141413">
+<circle cx="330" cy="252" r="9"></circle>
+<circle cx="352" cy="252" r="9"></circle>
+<path d="M330 252 L 341 238 L 352 252 Z" fill="none" stroke="#141413" stroke-width="3"></path>
+<path d="M341 238 L 338 222 L 346 218" fill="none" stroke="#141413" stroke-linecap="round" stroke-width="4"></path>
+<circle cx="348" cy="212" r="5"></circle>
+</g>
+<!-- title lockup being 審核ed -->
+<g>
+<rect fill="#141413" fill-opacity=".55" height="58" rx="6" width="176" x="60" y="70"></rect>
+<text fill="#FAF9F5" font-family="Georgia, serif" font-size="22" font-style="italic" x="76" y="98">Ridgeline '26</text>
+<text fill="#E3DACC" font-family="monospace" font-size="10" letter-spacing="2" x="76" y="117">TEASER · CUT 04</text>
+</g>
+<!-- existing annotations (fake data) -->
+<g>
+<!-- box annotation on lockup -->
+<rect fill="none" height="74" rx="8" stroke="#D97757" stroke-width="3" width="192" x="52" y="62"></rect>
+<circle cx="52" cy="62" fill="#D97757" r="11"></circle>
+<text fill="#fff" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle" x="52" y="66">1</text>
+<!-- arrow annotation at sun flare -->
+<path d="M560 220 Q 540 175 505 150" fill="none" stroke="#E3DACC" stroke-width="3"></path>
+<path d="M505 150 L 521 152 M 505 150 L 511 165" stroke="#E3DACC" stroke-linecap="round" stroke-width="3"></path>
+<circle cx="560" cy="220" fill="#788C5D" r="11"></circle>
+<text fill="#fff" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle" x="560" y="224">2</text>
+<!-- pen scribble on road -->
+<path d="M380 330 q 14 -12 28 -2 q 14 10 26 -4" fill="none" stroke="#D97757" stroke-linecap="round" stroke-width="3"></path>
+<circle cx="380" cy="330" fill="#D97757" r="11"></circle>
+<text fill="#fff" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle" x="380" y="334">3</text>
+</g>
+</svg>
+<div class="chip-tc">00:00:41:07</div>
+<div class="chip-paused">暫停</div>
+ 搜尋欄 
+<div class="seekbar">
+<div class="seek-pins">
+<span class="seek-pin" style="left:34%"></span>
+<span class="seek-pin" style="left:51%"></span>
+<span class="seek-pin" style="left:78%"></span>
+</div>
+<div class="seek-track">
+<div class="seek-buf"></div>
+<div class="seek-play"></div>
+<div class="seek-head"></div>
+</div>
+</div>
+ 留言抽屜 
+<aside aria-hidden="true" class="drawer" id="drawer">
+<div class="drawer-head">
+<h3>留言 <span class="cnt">@ 00:41</span></h3>
+<button aria-label="Close comments" class="drawer-close" id="drawerClose">✕</button>
+</div>
+<div class="drawer-body">
+<div class="cmt">
+<div class="who"><span class="av" style="background:var(--clay)">莫</span><span class="nm">瑪雅·奧卡福</span><span class="tc">00:41:07</span></div>
+<p>Lockup 來得太早了——我們還沒有贏得這個名字。我們能在 00:48 保持巔峰嗎？</p>
+<div class="pin">↳ 固定在註 #1</div>
+</div>
+<div class="cmt">
+<div class="who"><span class="av" style="background:var(--olive)">DP</span><span class="nm">戴夫·帕特爾</span><span class="tc">00:41:07</span></div>
+<p>太陽的耀斑會影響 HDR 匯出。顏色通道的標記。</p>
+<div class="pin">↳ 固定在註 #2</div>
+</div>
+<div class="cmt">
+<div class="who"><span class="av" style="background:var(--g500)">SR</span><span class="nm">薩姆·魯伊斯</span><span class="tc">00:41:07</span></div>
+<p>道路標記向後抖動一格。可能是穩定作物－見塗鴉。</p>
+<div class="pin">↳ 固定在註 #3</div>
+</div>
+</div>
+<div class="drawer-input">回覆於 00:41...</div>
+</aside>
+</div>
+ 工具列（一個標記，每個變體重新定位） 
+<div aria-label="Frame annotation tools" class="toolbar" id="toolbar" role="toolbar">
+<div class="tb-group" id="tools">
+<button aria-label="Select tool" class="tool on" data-tool="select" title="Select (V)">
+<svg fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M5 3l14 8-6.5 1.5L9 19 5 3z"></path></svg>
+</button>
+<button aria-label="Pen tool" class="tool" data-tool="pen" title="Pen (P)">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M17 3l4 4L8 20l-5 1 1-5L17 3z"></path></svg>
+</button>
+<button aria-label="Arrow tool" class="tool" data-tool="arrow" title="Arrow (A)">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M5 19L19 5M19 5h-8M19 5v8"></path></svg>
+</button>
+<button aria-label="Box tool" class="tool" data-tool="box" title="Box (B)">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect height="12" rx="2" width="16" x="4" y="6"></rect></svg>
+</button>
+<button aria-label="Text tool" class="tool" data-tool="text" title="Text (T)">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewbox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"></path></svg>
+</button>
+<button aria-label="Blur tool" class="tool" data-tool="blur" title="Blur (U)">
+<svg fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 01-12 0c0-4.5 6-11 6-11z"></path><path d="M9.5 14a2.5 2.5 0 002.5 2.5" stroke-linecap="round"></path></svg>
+</button>
+</div>
+<div class="tb-sep"></div>
+<div aria-label="Annotation color" class="swatches" id="swatches">
+<button aria-label="Clay" class="swatch on" data-c="clay" style="background:#D97757" title="Clay"></button>
+<button aria-label="Olive" class="swatch" data-c="olive" style="background:#788C5D" title="Olive"></button>
+<button aria-label="Oat" class="swatch" data-c="oat" style="background:#E3DACC" title="Oat"></button>
+<button aria-label="White" class="swatch" data-c="white" style="background:#FAF9F5" title="White"></button>
+<button aria-label="Ink" class="swatch" data-c="ink" style="background:#141413" title="Ink"></button>
+</div>
+<div class="tb-sep"></div>
+<div aria-label="Stroke width" class="strokes" id="strokes">
+<button class="stroke s1" data-w="2" title="Thin"><i></i></button>
+<button class="stroke s2 on" data-w="4" title="Medium"><i></i></button>
+<button class="stroke s3" data-w="7" title="Thick"><i></i></button>
+</div>
+<div class="tb-sep"></div>
+<span class="ann-chip" title="Annotations on this frame">3 安。</span>
+<button aria-expanded="false" class="cmt-btn" id="cmtBtn">
+<svg fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H4l2-3.2A8 8 0 1121 12z"></path></svg>
+<span>留言</span>
+</button>
+</div>
+</div>
+<p class="art-footnote">上面的所有內容都是一個靜態檔案中的假資料——沒有任何內容讀取 <code>apps/player</code> 還沒有。真正的接線將位於 <code>apps/player/src/annotate/Toolbar.tsx</code> 後面的 <code>frame_annotations</code> flag.</p>
+</div>
+ ═══開放式問題═══ 
+<div class="questions">
+<div class="label">為你開放問題</div>
+<h2>我不想猜測四個佈局調用</h2>
+<p class="sub">點擊一個chip來記錄你的選擇－下面的回覆模板會自動填寫。</p>
+<div class="q" data-q="placement">
+<p class="q-text"><span class="qn">Q1</span>應發布哪個展示位置？藥丸停留在指針附近，但覆蓋了下三分之一的動作；導軌永遠不會遮擋素材，但遠離搜索欄； under-seekbar 竊取了player高度的約 56px。</p>
+<div class="q-chips">
+<button class="chip" data-a="Floating pill"><span class="k">一個</span>浮丸</button>
+<button class="chip" data-a="Docked left rail"><span class="k">乙</span>停靠左導軌</button>
+<button class="chip" data-a="Under the seekbar"><span class="k">C</span>在搜尋欄下</button>
+</div>
+</div>
+<div class="q" data-q="colorstroke">
+<p class="q-text"><span class="qn">Q2</span>顏色+描邊控制：在欄中始終可見（什麼是嘲笑的），或折疊在活動工具上的彈出框後面？內聯更快，一鍵點擊； popover 將藥丸縮小了約 140 像素，這對於 13 吋筆記型電腦來說很重要。</p>
+<div class="q-chips">
+<button class="chip" data-a="Always inline"><span class="k">一個</span>始終內聯</button>
+<button class="chip" data-a="Popover on active tool"><span class="k">乙</span>活動工具上的彈出窗口</button>
+</div>
+</div>
+<div class="q" data-q="drawer">
+<p class="q-text"><span class="qn">第三季</span>留言抽屜目前覆蓋框架的右邊緣（透過「留言」按鈕打開它）。是否應該將影片向左推，這樣閱讀時annotation就不會被覆蓋？</p>
+<div class="q-chips">
+<button class="chip" data-a="Overlay the frame"><span class="k">一個</span>覆蓋框架</button>
+<button class="chip" data-a="Push the video left"><span class="k">乙</span>將影片向左推</button>
+</div>
+</div>
+<div class="q" data-q="blur">
+<p class="q-text"><span class="qn">第四季</span>Blur 是唯一需要在匯出時進行伺服器端渲染的工具。將其保留在 v1 工具列中（帶有「匯出處理」徽章），還是將其保留在 v1.1 中，以便第一個版本提供全客戶端？</p>
+<div class="q-chips">
+<button class="chip" data-a="Ship blur in v1"><span class="k">一個</span>在 v1 中發貨</button>
+<button class="chip" data-a="Hold blur for v1.1"><span class="k">乙</span>保留v1.1</button>
+</div>
+</div>
+<div class="reply">
+<div class="label">我的反應 — 複製並貼上回來</div>
+<button class="copybtn" id="copyReply">複製回覆</button>
+<pre id="replyText"></pre>
+</div>
+</div>
+<footer>屬於 <a href="index.html">了解你的未知</a> — 部落格文章的搭配範例。</footer>
+</div>
+<script>
+(function () {
+ "使用嚴格";
+
+ /* clipboard helper with fallback */
+ function copyText(text, btn) {
+  function flash() {
+   var old = btn.textContent;
+   btn.textContent = "Copied";
+   btn.classList.add("done");
+   setTimeout(function () { btn.textContent = old; btn.classList.remove("done"); }, 1400);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+   navigator.clipboard.writeText(text).then(flash, function () { legacy(); });
+  } else { legacy(); }
+  function legacy() {
+   var ta = document.createElement("textarea");
+   ta.value = text;
+   ta.style.position = "fixed"; ta.style.opacity = "0";
+   document.body.應用程式endChild(ta);
+   ta.select();
+   try { document.execCommand("copy"); flash(); } catch (e) {}
+   document.body.removeChild(ta);
+  }
+ }
+
+ /* copy 提示詞 */
+ var 提示詞Btn = document.getElementById("copyPrompt");
+ 提示詞Btn.addEventListener("click", function () {
+  copyText(document.getElementById("提示詞Text").textContent.trim(), 提示詞Btn);
+ });
+
+ /* layout variant segmented control */
+ var seg = document.getElementById("variantSeg");
+ var stagewrap = document.getElementById("stagewrap");
+ var note = document.getElementById("variantNote");
+ var notes = {
+  "v-pill": "<b>浮動藥丸，底部中心。 </b>懸停在搜尋欄上方；播放時隱藏。最接近 Loom/Frame.io 發布的內容。",
+  "v-rail": "<b>停靠左導軌。 </b>絕不遮擋鏡頭；工具像編輯器一樣垂直堆疊。在小螢幕上花費最水準的空間。",
+  "v-dock": "<b>附加在seekbar下方。 </b>零遮擋，始終可見 - 但會佔用player高度約 56 像素，並且遠離你繪製的位置。"
+ };
+ Array.原型.forEach.call(seg.querySelectorAll("button"), function (b) {
+  b.addEventListener("click", function () {
+   Array.原型.forEach.call(seg.querySelectorAll("button"), function (x) { x.classList.remove("on"); });
+   b.classList.add("on");
+   stagewrap.className = "stagewrap " + b.dataset.v;
+   note.innerHTML = notes[b.dataset.v];
+  });
+ });
+
+ /* single-select helper for button groups */
+ function group(containerId, selector) {
+  var c = document.getElementById(containerId);
+  Array.原型.forEach.call(c.querySelectorAll(selector), function (b) {
+   b.addEventListener("click", function () {
+    Array.原型.forEach.call(c.querySelectorAll(selector), function (x) { x.classList.remove("on"); });
+    b.classList.add("on");
+   });
+  });
+ }
+ group("tools", ".tool");
+ group("swatches", ".swatch");
+ group("strokes", ".stroke");
+
+ /* comment drawer */
+ var drawer = document.getElementById("drawer");
+ var cmtBtn = document.getElementById("cmtBtn");
+ function setDrawer(open) {
+  drawer.classList.toggle("open", open);
+  drawer.setAttribute("aria-hidden", String(!open));
+  cmtBtn.setAttribute("aria-expanded", String(open));
+  cmtBtn.classList.toggle("on", open);
+ }
+ cmtBtn.addEventListener("click", function () { setDrawer(!drawer.classList.contains("open")); });
+ document.getElementById("drawerClose").addEventListener("click", function () { setDrawer(false); });
+
+ /* open-question chips → reply template */
+ var answers = { placement: null, colorstroke: null, drawer: null, blur: null };
+ var labels = {
+  placement: "Placement",
+  colorstroke: "顏色/描邊控制",
+  drawer: "留言抽屜",
+  blur: "模糊工具"
+ };
+ var replyEl = document.getElementById("replyText");
+
+ function esc(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "<").replace(/>/g, ">");
+ }
+ function renderReply() {
+  var n = 0;
+  var html = Object.keys(answers).map(function (k) {
+   n += 1;
+   var v = answers[k];
+   return n + ". " + esc(labels[k]) + ": " +
+    (v ? "<span class=\"picked\">" + esc(v) + "</span>"
+      : "<span class=\"blank\">___（點擊上方的chip）</span>");
+  }).join("\n");
+  html += "其他註：<span class=\"blank\">___</span>";
+  replyEl.innerHTML = html;
+ }
+ function replyPlain() {
+  var n = 0;
+  return Object.keys(answers).map(function (k) {
+   n += 1;
+   return n + ". " + labels[k] + ": " + (answers[k] || "___");
+  }).join("\n") + "其他注意事項：___";
+ }
+
+ Array.原型.forEach.call(document.querySelectorAll(".q"), function (q) {
+  var key = q.dataset.q;
+  Array.原型.forEach.call(q.querySelectorAll(".chip"), function (chip) {
+   chip.addEventListener("click", function () {
+    Array.原型.forEach.call(q.querySelectorAll(".chip"), function (x) { x.classList.remove("on"); });
+    chip.classList.add("on");
+    answers[key] = chip.dataset.a;
+    renderReply();
+   });
+  });
+ });
+ renderReply();
+
+ var copyReplyBtn = document.getElementById("copyReply");
+ copyReplyBtn.addEventListener("click", function () {
+  copyText("我對工具列模擬的反應：" + replyPlain(), copyReplyBtn);
+ });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,660 @@
+ 版權所有 2026 Anthropic PBC · SPDX-許可證-識別碼：Apache-2.0 
+html
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>盲點掃描－了解你的未知</title>
+<style>
+ :root {
+  --ivory: #FAF9F5;
+  --paper: #FFFFFF;
+  --slate: #141413;
+  --clay:  #D97757;
+  --clay-d: #B85C3E;
+  --oat:  #E3DACC;
+  --olive: #788C5D;
+  --g100:  #F0EEE6;
+  --g200:  #E6E3DA;
+  --g300:  #D1CFC5;
+  --g500:  #87867F;
+  --g700:  #3D3D3A;
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --sans: system-ui, -應用程式le-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+ }
+ * { box-sizing: border-box; }
+ html { scroll-behavior: smooth; }
+ body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--slate);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+ }
+ .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px 100px; }
+
+ /* ── page header ─────────────────────── */
+ header.page-head {
+  padding: 56px 0 8px;
+  position: relative;
+ }
+ .head-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+ }
+ .eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g500);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+ }
+ .eyebrow::before {
+  content: "";
+  width: 24px; height: 1.5px;
+  background: var(--clay);
+  flex: none;
+ }
+ a.back {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--g500);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+ }
+ a.back:hover { color: var(--clay); }
+ h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(32px, 5vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  margin: 18px 0 10px;
+ }
+ .lede {
+  font-size: 16px;
+  color: var(--g700);
+  max-width: 640px;
+  margin: 0 0 28px;
+ }
+
+ /* ── 提示詞 box ──────────────────────── */
+ .提示詞-card {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 22px 26px 24px;
+  position: relative;
+ }
+ .提示詞-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+ }
+ blockquote.提示詞 {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17.5px;
+  line-height: 1.55;
+  color: var(--slate);
+  border-left: 3px solid var(--oat);
+  padding-left: 18px;
+ }
+ button.copy-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--g700);
+  background: var(--g100);
+  border: 1.5px solid var(--g300);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: border-color 120ms, color 120ms, background 120ms;
+  white-space: nowrap;
+ }
+ button.copy-btn:hover { border-color: var(--clay); color: var(--clay-d); }
+ button.copy-btn.copied {
+  background: var(--olive);
+  border-color: var(--olive);
+  color: var(--paper);
+ }
+
+ /* ── divider ─────────────────────────── */
+ .divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 44px 0 32px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--g500);
+  white-space: nowrap;
+ }
+ .divider::before, .divider::after {
+  content: "";
+  flex: 1;
+  height: 1.5px;
+  background: var(--g300);
+ }
+
+ /* ── 產物 frame ──────────────────── */
+ .產物 {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  overflow: hidden;
+ }
+ .產物-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-bottom: 1.5px solid var(--g200);
+  background: var(--g100);
+ }
+ .產物-bar .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--g300); }
+ .產物-bar .file {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--g500);
+  margin-left: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+ }
+ .產物-body { padding: 34px 34px 40px; }
+ @media (max-width: 560px) { .產物-body { padding: 24px 18px 30px; } }
+
+ .產物-body h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 27px;
+  letter-spacing: -0.014em;
+  line-height: 1.15;
+  margin: 0 0 6px;
+ }
+ .產物-body .sub {
+  font-size: 14px;
+  color: var(--g500);
+  margin: 0 0 24px;
+ }
+ .產物-body .sub code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--g100);
+  border: 1px solid var(--g200);
+  border-radius: 5px;
+  padding: 1px 5px;
+  color: var(--g700);
+ }
+
+ /* asked vs walking into */
+ .vs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 34px;
+ }
+ @media (max-width: 640px) { .vs-grid { grid-template-columns: 1fr; } }
+ .vs-cell {
+  border: 1.5px solid var(--g300);
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: var(--ivory);
+ }
+ .vs-cell.actual { border-color: var(--clay); background: #FBF3EF; }
+ .vs-cell .vs-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g500);
+  margin-bottom: 8px;
+ }
+ .vs-cell.actual .vs-tag { color: var(--clay-d); }
+ .vs-cell p { margin: 0; font-size: 14px; color: var(--g700); }
+ .vs-cell p strong { color: var(--slate); }
+
+ /* stat strip */
+ .stat-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 26px;
+  padding: 14px 18px;
+  border: 1.5px solid var(--g200);
+  border-radius: 12px;
+  background: var(--g100);
+  margin-bottom: 36px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--g700);
+ }
+ .stat-strip b { color: var(--slate); font-weight: 600; }
+ .stat-strip .warn b { color: var(--clay-d); }
+
+ /* section labels inside 產物 */
+ .art-eyebrow {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g500);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+ }
+ .art-eyebrow::before {
+  content: "";
+  width: 24px; height: 1.5px;
+  background: var(--clay);
+  flex: none;
+ }
+
+ /* blindspot cards */
+ .bs-card {
+  border: 1.5px solid var(--g300);
+  border-radius: 12px;
+  background: var(--paper);
+  padding: 20px 22px 18px;
+  margin-bottom: 16px;
+ }
+ .bs-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+ }
+ .badge {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1.5px solid;
+  white-space: nowrap;
+ }
+ .badge.landmine { color: var(--clay-d); border-color: var(--clay); background: #FBF0EA; }
+ .badge.history { color: #8A6A3B; border-color: #C9B48E; background: var(--oat); }
+ .badge.convention { color: var(--g700); border-color: var(--g300); background: var(--g100); }
+ .badge.concept { color: #55663F; border-color: var(--olive); background: #EFF2E9; }
+ .bs-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--g500);
+ }
+ .bs-title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 18.5px;
+  letter-spacing: -0.01em;
+  color: var(--slate);
+  margin: 0;
+  flex: 1 1 100%;
+ }
+ .bs-card p { font-size: 14px; color: var(--g700); margin: 0 0 10px; }
+ .bs-card p:last-of-type { margin-bottom: 0; }
+ .bs-card code, .bite code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--g100);
+  border: 1px solid var(--g200);
+  border-radius: 5px;
+  padding: 1px 5px;
+  color: var(--g700);
+  word-break: break-word;
+ }
+ .bite {
+  display: flex;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--g700);
+  background: var(--ivory);
+  border-left: 3px solid var(--clay);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  margin: 12px 0;
+ }
+ .bite .bite-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--clay-d);
+  flex: none;
+  padding-top: 2px;
+ }
+
+ /* 提示詞 chips */
+ .chip-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 12px;
+ }
+ .提示詞-chip {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--slate);
+  background: var(--g100);
+  border: 1.5px solid var(--g300);
+  border-radius: 9px;
+  padding: 10px 13px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+ }
+ .提示詞-chip::before {
+  content: "› ";
+  color: var(--clay);
+  font-weight: 600;
+ }
+ .chip-row button.copy-btn { align-self: flex-start; margin-top: 2px; }
+ @media (max-width: 480px) {
+  .chip-row { flex-direction: column; }
+  .chip-row button.copy-btn { align-self: flex-end; margin-top: 0; }
+ }
+
+ /* improved 提示詞 card */
+ .final-card {
+  border: 1.5px solid var(--slate);
+  border-radius: 14px;
+  background: var(--paper);
+  padding: 24px 26px 26px;
+  margin-top: 38px;
+  box-shadow: 0 10px 28px rgba(20,20,19,.07);
+ }
+ .final-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+ }
+ .final-head .art-eyebrow { margin: 0; color: var(--clay-d); }
+ .final-card h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.012em;
+  margin: 8px 0 14px;
+ }
+ .final-提示詞 {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--slate);
+  background: var(--ivory);
+  border: 1.5px solid var(--g200);
+  border-radius: 10px;
+  padding: 18px 20px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  overflow-x: auto;
+ }
+ .final-note {
+  font-size: 13px;
+  color: var(--g500);
+  margin: 14px 0 0;
+ }
+
+ /* footer */
+ footer {
+  margin-top: 56px;
+  padding-top: 22px;
+  border-top: 1.5px solid var(--g200);
+  font-size: 13px;
+  color: var(--g500);
+ }
+ footer a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+ footer a:hover { text-decoration-color: var(--clay); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="page-head">
+<div class="head-row">
+<div class="eyebrow">了解你的未知 · 實作前</div>
+<a class="back" href="index.html">← 所有範例</a>
+</div>
+<h1>盲點掃描</h1>
+<p class="lede">在開始不熟悉的工作前，請 Claude 幫助你找出「未知中的未知」，並引導你寫出更好的提示詞。</p>
+<div class="提示詞-card">
+<div class="提示詞-label">
+<span>提示詞</span>
+<button class="copy-btn" data-copy-target="user-提示詞">複製提示詞</button>
+</div>
+<blockquote class="提示詞" id="user-提示詞">我正在嘗試新增一個身分驗證提供者（auth provider），但我對這份程式碼庫中的驗證模組（auth modules）一無所知。請幫我進行一次盲點掃描（blindspot pass），協助我找出相關的「未知中的未知」（unknown unknowns），並引導我如何給你更好的提示詞。</blockquote>
+</div>
+</header>
+<div class="divider">Claude 產出的內容</div>
+<div class="產物">
+<div class="產物-bar">
+<span class="dot"></span><span class="dot"></span><span class="dot"></span>
+<span class="file">blindspot-pass · acme/services/auth · 掃描了 47 個文件</span>
+</div>
+<div class="產物-body">
+<h2>未知中的未知：Acme auth 模組</h2>
+<p class="sub">已掃描 <code>services/auth/</code> （47 個文件），自 2025 年 1 月以來有 214 次提交涉及它，3 次遷移正在進行中，2 次恢復嘗試。你會透過艱難的方式學到的七件事。</p>
+<div class="vs-grid">
+<div class="vs-cell">
+<div class="vs-tag">你要求什麼</div>
+<p>「新增的 SSO provider」 — 聽起來像是：實作一個接口，註冊它，寫redirect處理程序，完成。在乾淨的程式碼庫上，這是一個為期兩天的任務。</p>
+</div>
+<div class="vs-cell actual">
+<div class="vs-tag">你實際上正在走進什麼</div>
+<p>一個模組 <strong>會話儲存的遷移中期</strong>, 與 <strong>一個悄悄繞過middleware的provider</strong> 每個人都假設跑步， <strong>恢復之前的嘗試</strong> 正是在這個任務上，並且 <strong>身份關聯模型</strong> 從provider介面中根本看不到這一點。</p>
+</div>
+</div>
+<div class="stat-strip">
+<span class="warn"><b>4</b> 地雷</span>
+<span><b>2</b> 不成文的約定</span>
+<span><b>1</b> 缺失概念</span>
+<span><b>1</b> 恢復了執行此任務的嘗試（PR #2841）</span>
+</div>
+<div class="art-eyebrow">盲點</div>
+<!-- 1 -->
+<div class="bs-card">
+<div class="bs-head">
+<span class="badge landmine">地雷</span>
+<span class="bs-num">01</span>
+<h3 class="bs-title">會話是雙重寫入的——你首先發現的 Redis 儲存是錯誤的</h3>
+</div>
+<p>Acme 正在從 Postgres 認同的會話遷移到 Redis (<code>MIG-118</code>，自三月以來陷入停滯）。目前每個會話寫入都會經過 <code>SessionBridge.write()</code>，扇出到 <em>兩者</em> <code>RedisSessionStore</code> 和遺產 <code>pg_sessions</code> 表。遷移從未完成，因此讀取仍然來自 Postgres。</p>
+<div class="bite"><span class="bite-tag">為什麼會咬人</span><span>尋找“會話”範圍 <code>RedisSessionStore</code> 首先——它看起來很規範，有最新的程式碼和最好的文件。直接寫入它，你的登入將在 dev 中正常工作（在那裡啟用了 Redis 讀取），而在 prod 中則默默地失敗，其中讀取仍然會命中 Postgres。</span></div>
+<div class="chip-row">
+<div class="提示詞-chip" id="chip-1">當你為新provider建立會話時，請透過 SessionBridge 路由所有內容 - 切勿直接透過 RedisSessionStore 或 pg_sessions 進行路由。在編寫任何會話程式碼之前解釋一下 MIG-118 讀/寫分割。</div>
+<button class="copy-btn" data-copy-target="chip-1">複製</button>
+</div>
+</div>
+<!-- 2 -->
+<div class="bs-card">
+<div class="bs-head">
+<span class="badge landmine">地雷</span>
+<span class="bs-num">02</span>
+<h3 class="bs-title">SAML provider（你顯而易見的範本）繞過了驗證middleware</h3>
+</div>
+<p>除 SAML 之外的所有provider均安裝在 <code>authPipeline</code>，它運行速率限制、審核日誌記錄和設備信任檢查。 <code>saml/handler.ts</code> 將其 ACS 端點直接掛載在路由器上，因為 SP 發起的 POST 回呼在 2024 年破壞了 CSRF 層，並且沒有人回來。有一個 <code>// TODO(priya): fold back into pipeline</code> 從 14 個月前開始。</p>
+<div class="bite"><span class="bite-tag">為什麼會咬人</span><span>SAML 是最近新增的provider，因此它是自然要複製的檔案。複製它，你的新provider就沒有速率限制，也沒有audit trail——這不會導致任何測試失敗，因為合約測試不會斷言middleware的存在。</span></div>
+<div class="chip-row">
+<div class="提示詞-chip" id="chip-2">使用 oauth/google.ts 作為結構模板，而不是 saml/handler.ts — SAML 故意繞過 authPipeline。確認新provider的路由已安裝在 authPipeline 內並顯示安裝點。</div>
+<button class="copy-btn" data-copy-target="chip-2">複製</button>
+</div>
+</div>
+<!-- 3 -->
+<div class="bs-card">
+<div class="bs-head">
+<span class="badge history">歷史</span>
+<span class="bs-num">03</span>
+<h3 class="bs-title">有人已經嘗試過這個——並且由於一個仍然有效的原因而被恢復</h3>
+</div>
+<p>PR #2841（“新增 Okta OIDC provider”，2025 年 9 月）已合併並在 9 天後恢復。恢復提交解釋了原因：Acme 回呼 URL 必須攜帶租使用者後綴 (<code>/auth/callback/:provider/:workspaceSlug</code>）因此workspace範圍的邀請連結在重定嚮往返後仍然存在。 Okta 嚴格的redirect URI 匹配拒絕了動態後綴，並邀請使用者登入錯誤的workspace。每個人都同意的修復方案 - 簽署的狀態參數workspace聲明 <code>AUTH_STATE_SECRET</code> - 是在恢復線程中設計的，但從未構建。</p>
+<div class="bite"><span class="bite-tag">為什麼會咬人</span><span>當前程式碼中沒有任何暗示這一點。你將重新實作 #2841 的方法，透過每個本機測試（單一workspace開發環境），並在被邀請的使用者第一次登入時重新發現生產中的錯誤。</span></div>
+<div class="chip-row">
+<div class="提示詞-chip" id="chip-3">首先閱讀 PR #2841 的回應。實作它建議的簽章狀態參數workspace聲明，而不是帶有租使用者後綴的回呼 URL，並為workspace範圍的邀請流程新增測試。</div>
+<button class="copy-btn" data-copy-target="chip-3">複製</button>
+</div>
+</div>
+<!-- 4 -->
+<div class="bs-card">
+<div class="bs-head">
+<span class="badge concept">缺少概念</span>
+<span class="bs-num">04</span>
+<h3 class="bs-title">身分和帳戶是不同的東西——provider介面隱藏了它</h3>
+</div>
+<p>極致劈叉 <code>users</code> 來自 <code>identities</code>：一個帳戶可以有多個連結的身份（電子郵件+密碼、Google、SAML），加入到 <code>identities</code> 表。provider介面僅傳回一個設定檔；連結決策發生在 <code>identity/linker.ts</code>，輸入經過驗證的電子郵件。無法保證電子郵件經過驗證（許多 SSO IdP 不保證）的provider必須設置 <code>requiresManualLink: true</code> 或者連結器會很樂意合併兩個共享公司別名的不同人。</p>
+<div class="bite"><span class="bite-tag">為什麼會咬人</span><span>天真地實作介面，一切正常 - 直到客戶的 IdP 發送未經驗證或重新分配的電子郵件，並且你的provider默默地將陌生人的身份附加到現有帳戶。這是帳戶接管錯誤，而不是登入錯誤。</span></div>
+<div class="chip-row">
+<div class="提示詞-chip" id="chip-4">在實作之前引導我了解一下 Identity/linker.ts。明確決定此 IdP 是否保證經過驗證的電子郵件；如果沒有，則設定requiresManualLink並建立手動連結確認路徑。</div>
+<button class="copy-btn" data-copy-target="chip-4">複製</button>
+</div>
+</div>
+<!-- 5 -->
+<div class="bs-card">
+<div class="bs-head">
+<span class="badge landmine">地雷</span>
+<span class="bs-num">05</span>
+<h3 class="bs-title">令牌刷新位於一個標誌後面，該標誌在開發中打開，在生產中關閉</h3>
+</div>
+<p>刷新令牌輪換由以下因素控制 <code>auth.refresh_rotation</code> 在 <code>flags.yaml</code>。它預設為 <code>true</code> 在開發和分階段， <code>false</code> 在prod 中（五月時鐘偏離事件後暫停推出）。隨著旗幟的關閉，產品會議將準確地進行 <code>ACCESS_TOKEN_TTL</code> (12h)，然後硬過期－沒有刷新路徑。</p>
+<div class="bite"><span class="bite-tag">為什麼會咬人</span><span>你編寫的任何刷新邏輯都將針對開發行為和prod 中的死程式碼進行測試。更糟的是：如果你的provider假設發生了刷新，那麼產品使用者每 12 小時就會在會話中登出，並且錯誤報告會指出“SSO 隨機將我登出”，並指向你的程式碼。</span></div>
+<div class="chip-row">
+<div class="提示詞-chip" id="chip-5">針對 auth.refresh_rotation=false 實作（產品現實）。讓provider在 12 小時硬性期限內工作，並單獨注意如果恢復輪換推出會發生什麼變化。</div>
+<button class="copy-btn" data-copy-target="chip-5">複製</button>
+</div>
+</div>
+<!-- 6 -->
+<div class="bs-card">
+<div class="bs-head">
+<span class="badge convention">公約</span>
+<span class="bs-num">06</span>
+<h3 class="bs-title">註冊provider需要三個步驟，並且只有兩個步驟是可發現的</h3>
+</div>
+<p>provider在編譯時並不活躍。它必須 (1) 註冊於 <code>providers/registry.ts</code>，(2) 插入 <code>auth_providers</code> 透過遷移表 - 管理 UI 讀取資料庫，而不是註冊表 - 並 (3) 新增到固定列表中 <code>__tests__/provider-contract.規格說明.ts</code>，它針對每個註冊的provider運行共享合約套件（狀態驗證、重播保護、登出扇出）。如果登錄機碼和裝置清單不一致，CI 就會失敗。</p>
+<div class="bite"><span class="bite-tag">為什麼會咬人</span><span>跳過遷移，provider會編譯、通過測試，並且永遠不會出現在任何workspace的 SSO 設定中。兩位工程師為此獨立損失了半天；它不在任何人的文件中。</span></div>
+<div class="chip-row">
+<div class="提示詞-chip" id="chip-6">完成所有三個註冊步驟：registry.ts、auth_providers 遷移和provider合約固定清單。在我們完成之前，向我展示傳遞給新provider的合約套件。</div>
+<button class="copy-btn" data-copy-target="chip-6">複製</button>
+</div>
+</div>
+<!-- 7 -->
+<div class="bs-card">
+<div class="bs-head">
+<span class="badge landmine">地雷</span>
+<span class="bs-num">07</span>
+<h3 class="bs-title">登出不是一個函數呼叫－它是一個事件，審核player會監聽</h3>
+</div>
+<p>會話撤銷發布 <code>auth.session.revoked</code> 在內部事件總線上。即時審閱播放器擁有自己的長期播放授權，並且僅在消耗該事件時才釋放它們。 <code>logout.ts</code> 為現有provider處理此問題，但 SSO 單點登出 (SLO) 回調到達單獨的路徑，並且必須自行發布事件。</p>
+<div class="bite"><span class="bite-tag">為什麼會咬人</span><span>錯過事件並登出「有效」——會話行消失了——但任何擁有打開的審閱選項卡的人都可以保留對私人視訊的完全播放存取權限，直到授權 TTL 到期（最長 24 小時）。對於向工作室出售審核工作流程的公司來說，這是安全事件，而不是錯誤。</span></div>
+<div class="chip-row">
+<div class="提示詞-chip" id="chip-7">處理 SLO：新provider中的任何撤銷路徑都必須發佈 auth.session.revoked。新增一個測試，斷言審核player的授權在 IdP 發起的登出時釋放。</div>
+<button class="copy-btn" data-copy-target="chip-7">複製</button>
+</div>
+</div>
+ 決賽 
+<div class="final-card">
+<div class="final-head">
+<div class="art-eyebrow">你改進的提示</div>
+<button class="copy-btn" data-copy-target="final-提示詞">複製提示詞</button>
+</div>
+<h3>上面的所有內容都包含在你應該實際給我的提示中</h3>
+<pre class="final-提示詞" id="final-提示詞">向 Acme 新增新的 SSO 驗證 provider。盲點傳遞的約束：
+
+1. Sessions：透過SessionBridge路由所有會話寫入（MIG-118是
+  未完成的； prod 仍然從 pg_sessions 讀取）。切勿觸摸
+  直接RedisSessionStore。
+2. 模板：結構基於 oauth/google.ts，而不是 saml/handler.ts —
+  SAML 繞過 authPipeline。在 authPipeline 中掛載所有新路由
+  並顯示掛載點。
+3. 歷史：先閱讀 PR #2841 的回應。落實已簽署的
+  狀態參數workspace聲明 (AUTH_STATE_SECRET) 而非
+  以租使用者為字尾的回呼 URL，並測試workspace邀請流程。
+4. 身分連結：在編碼之前引導我瀏覽一下identity/linker.ts。
+  如果此 IdP 無法保證經過驗證的電子郵件，請設定 requireManualLink
+  並建立確認路徑—不要自動連結。
+5. 標誌：針對 auth.refresh_rotation=false (prod) 實作。會議
+  12 小時硬過期；沒有刷新路徑。注意如果旋轉會發生什麼變化
+  船舶。
+6. 註冊：所有三個步驟 -providers/registry.ts，
+  auth_providers 遷移和provider合約固定清單。
+  將合約套件顯示為綠色。
+7.登出：每個撤銷路徑都必須發布auth.session.revoked，並且
+  新增一個測試，以釋放審核player的播放授權
+  IdP 發起的登出。
+
+依此順序工作：連結器演練→提供程式框架→回調+
+狀態宣告 → 註冊 → SLO + 事件 → 合約測試。停止並
+在編寫程式碼之前向我展示演練後的計畫。</pre>
+<p class="final-note">七個句子你今天早上不可能寫出來──每個句子都是用別人的半天時間買來的。這就是通行證的重點。</p>
+</div>
+</div>
+</div>
+<footer>屬於 <a href="index.html">了解你的未知</a> — 部落格文章的搭配範例。</footer>
+</div>
+<script>
+(function () {
+ function copyText(text, btn) {
+  function done() {
+   var prev = btn.textContent;
+   btn.textContent = "Copied";
+   btn.classList.add("copied");
+   setTimeout(function () {
+    btn.textContent = prev;
+    btn.classList.remove("copied");
+   }, 1600);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+   navigator.clipboard.writeText(text).then(done, function () { fallback(text); done(); });
+  } else {
+   fallback(text);
+   done();
+  }
+ }
+ function fallback(text) {
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.應用程式endChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(ta);
+ }
+ document.addEventListener("click", function (e) {
+  var btn = e.target.closest("button[data-copy-target]");
+  if (!btn) return;
+  var el = document.getElementById(btn.getAttribute("data-copy-target"));
+  if (!el) return;
+  copyText(el.textContent.trim(), btn);
+ });
+})();
+</script>
+</body>
+</html>

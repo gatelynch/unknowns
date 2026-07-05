@@ -1,0 +1,696 @@
+ 版權所有 2026 Anthropic PBC · SPDX-許可證-識別碼：Apache-2.0 
+html
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>腦力激盪介入方式－了解你的未知</title>
+<style>
+ :root {
+  --ivory: #FAF9F5;
+  --paper: #FFFFFF;
+  --slate: #141413;
+  --clay:  #D97757;
+  --clay-d: #B85C3E;
+  --oat:  #E3DACC;
+  --olive: #788C5D;
+  --g100:  #F0EEE6;
+  --g200:  #E6E3DA;
+  --g300:  #D1CFC5;
+  --g500:  #87867F;
+  --g700:  #3D3D3A;
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --sans: system-ui, -應用程式le-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+ }
+ * { box-sizing: border-box; }
+ html { scroll-behavior: smooth; }
+ body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--slate);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+ }
+ .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px 160px; }
+
+ /* ── header ─────────────────────────── */
+ header.page-head {
+  padding: 56px 0 8px;
+  position: relative;
+ }
+ .eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g500);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+ }
+ .eyebrow::before {
+  content: "";
+  width: 24px; height: 1.5px;
+  background: var(--clay);
+  flex: none;
+ }
+ a.back {
+  position: absolute;
+  top: 58px; right: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--g500);
+  text-decoration: none;
+ }
+ a.back:hover { color: var(--clay); }
+ h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(32px, 4.6vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  margin: 0 0 10px;
+ }
+ .lede {
+  font-size: 16px;
+  color: var(--g700);
+  max-width: 640px;
+  margin: 0 0 30px;
+ }
+
+ /* ── 提示詞 box ─────────────────────── */
+ .提示詞-card {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 22px 24px 24px;
+  position: relative;
+ }
+ .提示詞-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: 12px;
+ }
+ .提示詞-card blockquote {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17.5px;
+  line-height: 1.5;
+  color: var(--slate);
+  max-width: 60ch;
+ }
+ button.copy-提示詞 {
+  position: absolute;
+  top: 16px; right: 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--g700);
+  background: var(--g100);
+  border: 1.5px solid var(--g300);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color 120ms, color 120ms;
+ }
+ button.copy-提示詞:hover { border-color: var(--clay); color: var(--clay-d); }
+ button.copy-提示詞.copied { color: var(--olive); border-color: var(--olive); }
+ @media (max-width: 560px) {
+  button.copy-提示詞 { position: static; margin-top: 14px; }
+ }
+
+ /* ── divider ────────────────────────── */
+ .divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 46px 0 34px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--g500);
+  white-space: nowrap;
+ }
+ .divider::before, .divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--g300);
+ }
+
+ /* ── 產物 frame ─────────────────── */
+ .產物 {
+  background: var(--paper);
+  border: 1.5px solid var(--g300);
+  border-radius: 14px;
+  padding: 30px clamp(16px, 3.5vw, 34px) 34px;
+ }
+ .產物 h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(23px, 3vw, 29px);
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  margin: 6px 0 6px;
+ }
+ .art-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--g500);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+ }
+ .art-eyebrow::before {
+  content: "";
+  width: 24px; height: 1.5px;
+  background: var(--clay);
+  flex: none;
+ }
+ .art-sub {
+  font-size: 14.5px;
+  color: var(--g700);
+  max-width: 66ch;
+  margin: 0 0 26px;
+ }
+ .art-sub code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--g100);
+  border-radius: 5px;
+  padding: 1px 5px;
+ }
+
+ /* ── 規格說明trum strip ─────────────────── */
+ .規格說明trum {
+  margin: 8px 0 34px;
+ }
+ .規格說明-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--g500);
+  margin-bottom: 10px;
+ }
+ .規格說明-labels .lo { color: var(--olive); }
+ .規格說明-labels .hi { color: var(--clay-d); }
+ .規格說明-track {
+  position: relative;
+  height: 56px;
+ }
+ .規格說明-line {
+  position: absolute;
+  left: 0; right: 0; top: 27px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--olive), var(--oat) 45%, var(--clay));
+  border-radius: 1px;
+ }
+ .規格說明-dot {
+  position: absolute;
+  top: 27px;
+  transform: translate(-50%, -50%);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--g500);
+  color: var(--g700);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 120ms, background 120ms, color 120ms, transform 120ms;
+ }
+ .規格說明-dot:hover { border-color: var(--slate); transform: translate(-50%, -50%) scale(1.12); }
+ .規格說明-dot.on {
+  background: var(--clay);
+  border-color: var(--clay-d);
+  color: #fff;
+ }
+ .規格說明-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--g500);
+  margin-top: 2px;
+ }
+ @media (max-width: 560px) {
+  .規格說明-dot { width: 24px; height: 24px; font-size: 10.5px; }
+  .規格說明-labels { font-size: 9px; }
+ }
+
+ /* ── intervention cards ─────────────── */
+ .cards { display: flex; flex-direction: column; gap: 14px; }
+ .iv {
+  border: 1.5px solid var(--g300);
+  border-radius: 12px;
+  background: var(--ivory);
+  padding: 18px 20px 16px;
+  scroll-margin-top: 20px;
+  transition: border-color 140ms, background 140ms;
+ }
+ .iv.checked { border-color: var(--clay); background: #FDF6F2; }
+ .iv-top {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+ }
+ .iv-num {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--clay-d);
+  flex: none;
+ }
+ .iv h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 200px;
+ }
+ .chips { display: flex; gap: 8px; align-items: center; flex: none; }
+ .effort {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  padding: 3px 10px;
+  border: 1.5px solid transparent;
+ }
+ .effort.s { background: #EEF2E6; color: var(--olive); border-color: #C9D4B6; }
+ .effort.m { background: var(--oat); color: #7A6A4F; border-color: var(--g300); }
+ .effort.l { background: #F8E7DE; color: var(--clay-d); border-color: #EBC5B4; }
+ .effort.xl { background: var(--clay); color: #fff; border-color: var(--clay-d); }
+ .path {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--g700);
+  background: var(--g100);
+  border: 1px solid var(--g200);
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin: 8px 0 2px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+ }
+ .iv-body { font-size: 14px; color: var(--g700); margin: 8px 0 0; }
+ .iv-body strong { color: var(--slate); font-weight: 600; }
+ .iv-found {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g500);
+ }
+ .iv-impact {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-top: 10px;
+  font-size: 13.5px;
+  color: var(--g700);
+ }
+ .iv-impact .tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--olive);
+  flex: none;
+ }
+ .iv-foot {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--g300);
+ }
+ label.resonate {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--g700);
+  cursor: pointer;
+  user-select: none;
+ }
+ label.resonate input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--g500);
+  border-radius: 5px;
+  background: var(--paper);
+  cursor: pointer;
+  margin: 0;
+  display: grid;
+  place-content: center;
+  transition: border-color 120ms, background 120ms;
+ }
+ label.resonate input::before {
+  content: "";
+  width: 9px; height: 9px;
+  transform: scale(0);
+  transition: transform 100ms;
+  clip-path: polygon(14% 44%, 0 60%, 40% 100%, 100% 16%, 84% 4%, 38% 71%);
+  background: #fff;
+ }
+ label.resonate input:checked { background: var(--clay); border-color: var(--clay-d); }
+ label.resonate input:checked::before { transform: scale(1.15); }
+ .iv.checked label.resonate { color: var(--clay-d); }
+
+ /* ── sticky reply bar ───────────────── */
+ .replybar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: var(--slate);
+  color: var(--ivory);
+  z-index: 50;
+  box-shadow: 0 -8px 24px rgba(20,20,19,.15);
+ }
+ .replybar-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+ }
+ .rb-count {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--oat);
+  flex: none;
+  white-space: nowrap;
+ }
+ .rb-count b { color: var(--clay); font-size: 15px; }
+ .rb-reply {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--g300);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+ }
+ .rb-reply.live { color: var(--ivory); }
+ button.rb-copy {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  background: var(--clay);
+  color: #fff;
+  border: 1.5px solid var(--clay-d);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 120ms, opacity 120ms;
+ }
+ button.rb-copy:hover:not(:disabled) { background: var(--clay-d); }
+ button.rb-copy:disabled { opacity: .35; cursor: default; }
+ button.rb-copy.copied { background: var(--olive); border-color: var(--olive); }
+ @media (max-width: 640px) {
+  .replybar-inner { flex-wrap: wrap; gap: 8px; padding: 10px 16px; }
+  .rb-reply { order: 3; flex-basis: 100%; }
+ }
+
+ /* ── footer ─────────────────────────── */
+ footer {
+  margin-top: 56px;
+  font-size: 13px;
+  color: var(--g500);
+ }
+ footer a { color: var(--clay); text-decoration-color: var(--oat); text-underline-offset: 3px; }
+ footer a:hover { text-decoration-color: var(--clay); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="page-head">
+<a class="back" href="index.html">← 所有範例</a>
+<div class="eyebrow">了解你的未知 · 實作前</div>
+<h1>腦力激盪介入方式</h1>
+<p class="lede">在開始修正前，先請 Claude 根據程式碼中實際存在的內容，展開整個選項空間。這能避免你把範圍設得太窄或太寬。</p>
+<div class="提示詞-card">
+<div class="提示詞-label">提示詞</div>
+<blockquote>這是我目前遇到的大致問題：使用者在完成新手引導（onboarding）後就流失了。請搜尋程式碼庫並腦力激盪出 10 個我們可以介入的地方，從成本最低到最具野心的方案。我會告訴你哪些方案比較符合我的想法。</blockquote>
+<button class="copy-提示詞" id="copyPrompt" type="button">複製提示詞</button>
+</div>
+</header>
+<div class="divider">Claude 產出的內容</div>
+<div class="產物">
+<div class="art-eyebrow">Acme · 新手引導後流失</div>
+<h2>10 個可以介入的地方，從最便宜到最有野心</h2>
+<p class="art-sub">我搜尋了 <code>apps/web</code>, <code>services/</code>, 和 <code>packages/</code> 用於入門、邀請和首次會話程式碼路徑。出現了一種模式： <strong>許多保留機制已經存在但已斷開</strong> — 下面最便宜的選擇主要是佈線，而不是建築。檢查那些引起共鳴的並複製底部的回應。</p>
+<div class="規格說明trum">
+<div class="規格說明-labels">
+<span class="lo">今天下午出貨</span>
+<span class="hi">四分之一長的賭注</span>
+</div>
+<div class="規格說明-track" id="規格說明Track">
+<div class="規格說明-line"></div>
+<button class="規格說明-dot" data-n="1" style="left:3%" title="Fix the dead-end empty state" type="button">1</button>
+<button class="規格說明-dot" data-n="2" style="left:10%" title="Turn on the sample project" type="button">2</button>
+<button class="規格說明-dot" data-n="3" style="left:19%" title="Show pending invites in-應用程式" type="button">3</button>
+<button class="規格說明-dot" data-n="4" style="left:29%" title="Wire up the milestones checklist" type="button">4</button>
+<button class="規格說明-dot" data-n="5" style="left:39%" title="Engineer the first-comment moment" type="button">5</button>
+<button class="規格說明-dot" data-n="6" style="left:49%" title="Rescue silently failed first uploads" type="button">6</button>
+<button class="規格說明-dot" data-n="7" style="left:60%" title="Watch-together first session" type="button">7</button>
+<button class="規格說明-dot" data-n="8" style="left:71%" title="Review workflow templates" type="button">8</button>
+<button class="規格說明-dot" data-n="9" style="left:84%" title="Built-in quick screen recording" type="button">9</button>
+<button class="規格說明-dot" data-n="10" style="left:96%" title="First-class client 審核 portals" type="button">10</button>
+</div>
+<div class="規格說明-ticks"><span>接線</span><span>新使用者介面</span><span>新的生命週期</span><span>新範圍</span></div>
+</div>
+<div class="cards">
+<div class="iv" id="iv1">
+<div class="iv-top">
+<span class="iv-num">#1</span>
+<h3>修復死胡同空狀態</h3>
+<div class="chips"><span class="effort s">S</span></div>
+</div>
+<span class="path">apps/web/src/新手引導/EmptyState.tsx</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 零項目儀表板呈現插圖和副本 <em>“還沒有項目”</em> ——除此之外什麼也沒有。 <code>NewProjectButton</code> 存在兩個目錄，但從未在這裡導入；唯一的出路是頂部導航中的小“+”。每個流失的使用者的最後一個螢幕可能就是這個。</p>
+<div class="iv-impact"><span class="tag">影響</span>100%的新使用者點擊這個畫面；真正的 CTA 加上「將影片放在任何地方」提示消除了prod 中最字面的死胡同。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="1" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+<div class="iv" id="iv2">
+<div class="iv-top">
+<span class="iv-num">#2</span>
+<h3>開啟已經存在的範例項目</h3>
+<div class="chips"><span class="effort s">S</span></div>
+</div>
+<span class="path">apps/web/src/projects/sampleProject.ts</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 有人建立了一個完整的種子展示項目 - “產品預告 v3”，其中包含 45 秒的剪輯、四個帶有時間戳的留言和一個已解決的線程 - 在標誌後面 <code>sample_project_v1</code>。旗幟還在 <strong>對每個人來說都是錯的</strong> 且該文件已經 8 個月沒有被碰過。該功能已完成；只是從未發貨。</p>
+<div class="iv-impact"><span class="tag">影響</span>新使用者在上傳任何內容之前都會看到即時留言的樣子。最便宜的「啊哈」——翻轉標誌，驗證種子腳本。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="2" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+<div class="iv" id="iv3">
+<div class="iv-top">
+<span class="iv-num">#3</span>
+<h3>在應用程式內顯示待處理的邀請</h3>
+<div class="chips"><span class="effort s">S</span></div>
+</div>
+<span class="path">services/mailer/templates/invite.mjml · apps/web/src/team/TeamPanel.tsx</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 邀請僅以電子郵件形式發出。 <code>TeamPanel</code> 查詢 <code>team_members</code> 但忽略了 <code>invites</code> 整個桌子 - 邀請者無法看到他們的隊友從未接受過，並且沒有重新發送。對於一個 <strong>協作的</strong> 留言工具，單獨使用者是一個等待中的流失者。</p>
+<div class="iv-impact"><span class="tag">影響</span>呈現「2 個邀請待處理·重新發送」將不可見的邀請衰減變為可見的、可修復的狀態。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="3" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+<div class="iv" id="iv4">
+<div class="iv-top">
+<span class="iv-num">#4</span>
+<h3>將里程碑表連接到儀表板清單</h3>
+<div class="chips"><span class="effort m">中號</span></div>
+</div>
+<span class="path">services/api/src/models/userMilestones.ts · apps/web/src/dashboard/Dashboard.tsx</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 後台已經記錄了 <code>first_upload</code>, <code>first_comment</code>, <code>first_invite_accepted</code>, 和 <code>first_應用程式roval</code> 在 <code>user_milestones</code> ——但是 <strong>沒有客戶端程式碼讀取該表</strong>。它的存在純粹是為了分析儀表板。 「完成 4 個步驟中的 3 個步驟」清單的所有要素都在那裡。</p>
+<div class="iv-impact"><span class="tag">影響</span>檢查表可靠地解除啟動；這需要一個端點和一個組件，因為追蹤已經可以工作。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="4" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+<div class="iv" id="iv5">
+<div class="iv-top">
+<span class="iv-num">#5</span>
+<h3>設計第一個留言時刻</h3>
+<div class="chips"><span class="effort m">中號</span></div>
+</div>
+<span class="path">apps/web/src/review/CommentComposer.tsx · apps/web/src/review/Timeline.tsx</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 帶有時間戳的annotation是 Acme 的核心循環，但其可供性是隱藏的：單擊時間線會將時間戳播種到作曲器中，但沒有任何內容教導這一點。 <code>Timeline.tsx</code> 有一個 <code>TODO: first-run hint?</code> 來自原作者。在第一次玩時新增一個幽靈圖釘——「此時點擊任何地方發表留言」。</p>
+<div class="iv-impact"><span class="tag">影響</span>如果首屆留言率是啟動指標（應該是），那麼這是最直接的槓桿。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="5" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+<div class="iv" id="iv6">
+<div class="iv-top">
+<span class="iv-num">#6</span>
+<h3>救援首次上傳失敗</h3>
+<div class="chips"><span class="effort m">中號</span></div>
+</div>
+<span class="path">services/ingest/src/transcode/queue.ts</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 當轉碼失敗時（不認同的編解碼器、過大的 ProRes、損壞的 moov 原子），作業將轉移到 <code>failed</code>，記錄到 Sentry，以及 <strong>不告訴使用者任何內容</strong> — 項目卡永遠顯示一個旋轉器。有一個僅可從內部管理腳本存取的重試後備預設程式碼路徑。</p>
+<div class="iv-impact"><span class="tag">影響</span>首次上傳永遠掛起的使用者不會提交票證 - 他們會離開。自動重試加上誠實的錯誤電子郵件將無聲的流失路徑轉換為認同路徑。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="6" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+<div class="iv" id="iv7">
+<div class="iv-top">
+<span class="iv-num">#7</span>
+<h3>一起觀看團隊的第一堂課</h3>
+<div class="chips"><span class="effort l">L</span></div>
+</div>
+<span class="path">apps/web/src/review/PresenceProvider.tsx · services/即時/</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 現場狀態已完全構建 - 共享播放頭、實時遊標、“Maya 正在觀看”徽章 - 但只有兩個人時它才會亮起 <em>發生</em> 開啟相同的留言。沒有什麼是巧合的。當隊友接受邀請時，加入「一起審核」調度提示，將兩者深度連結到同一會話中。</p>
+<div class="iv-impact"><span class="tag">影響</span>體驗過一次即時會話的團隊可能會以與單獨使用者不同的速度保留；這使得多人遊戲時刻變得刻意而不是幸運。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="7" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+<div class="iv" id="iv8">
+<div class="iv-top">
+<span class="iv-num">#8</span>
+<h3>發送五個審核工作流程模板</h3>
+<div class="chips"><span class="effort l">L</span></div>
+</div>
+<span class="path">packages/workflows/src/definitions/</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 審核工作流程（粗略→客戶審核→最終核准）是完全可設定的－並且開始 <strong>完全空白</strong>。定義目錄僅包含 <code>__fixtures__</code> 用於測試。從留言來看 <code>WorkflowEditor.tsx</code>，高級使用者複製共享的 Notion 文件來設定他們的文件。提供 5 個固執己見的範本：代理商交付、YouTube 管道、客戶核准、內部 QA、在地化通行證。</p>
+<div class="iv-impact"><span class="tag">影響</span>範本將「配置此抽象」轉換為「選擇你的工作」——這是工作流程工具中空白畫布流失的經典修復方法。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="8" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+<div class="iv" id="iv9">
+<div class="iv-top">
+<span class="iv-num">#9</span>
+<h3>內建快速螢幕和相機錄製</h3>
+<div class="chips"><span class="effort xl">XL</span></div>
+</div>
+<span class="path">新範圍 · services/攝取已經接受分塊 webm</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 今天，Acme 的新手引導培訓具有嚴格的外部依賴性： <strong>你需要一個完成的影片才能使用該產品</strong>。但是 <code>services/ingest</code> 已經接受分塊的 webm 上傳（為行動應用程式建置），因此基於 MediaRecorder 的「記錄螢幕，取得回饋」流程不需要管道工作 - 「只需」擷取 UI。消除了試驗閒置的最大原因：尚無任何可審核的內容。</p>
+<div class="iv-impact"><span class="tag">影響</span>可以啟動的變更－無需編輯的設計師和產品經理也可以自行建立第一個可審核的產物。體型大，範圍積大。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="9" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+<div class="iv" id="iv10">
+<div class="iv-top">
+<span class="iv-num">#10</span>
+<h3>一流的客戶留言門戶</h3>
+<div class="chips"><span class="effort xl">XL</span></div>
+</div>
+<span class="path">services/auth/src/guestTokens.ts · apps/web/src/share/</span>
+<p class="iv-body"><span class="iv-found">在程式碼中發現——</span> 訪客共享連結存在，但被故意削弱：令牌在 24 小時後過期，訪客無法發表留言，並且有一個 <code>// TODO(sasha): revisit guest perms after launch</code> 從兩年前開始。流失的使用者往往是那些 <em>客戶</em> 不會報名。讓客人成為一流的——持久的門戶、帶有名字的留言、沒有帳戶——每一次外部留言都會成為一個保留循環（和一個獲取循環）。</p>
+<div class="iv-impact"><span class="tag">影響</span>攻擊結構性原因：Acme的價值取決於拒絕創建帳戶的人。四分之一長的賭注，涉及驗證、計費和防止濫用的影響。</div>
+<div class="iv-foot"><label class="resonate"><input data-n="10" type="checkbox"/> 這引起共鳴</label></div>
+</div>
+</div>
+</div>
+<footer>屬於 <a href="index.html">了解你的未知</a> — 部落格文章的搭配範例。</footer>
+</div>
+<div class="replybar">
+<div class="replybar-inner">
+<span class="rb-count"><b id="rbNum">0</b> 產生共鳴</span>
+<span class="rb-reply" id="rbReply">檢查引起共鳴的介入方案——你的回覆就在這裡。</span>
+<button class="rb-copy" disabled="" id="rbCopy" type="button">複製回覆</button>
+</div>
+</div>
+<script>
+(function () {
+ var PROMPT = "這是我目前遇到的大致問題：使用者在完成新手引導（onboarding）後就流失了。請搜尋程式碼庫並腦力激盪出 10 個我們可以介入的地方，從成本最低到最具野心的方案。我會告訴你哪些方案比較符合我的想法。";
+
+ function copyText(text, btn, label, doneLabel) {
+  function done() {
+   btn.classList.add('copied');
+   btn.textContent = doneLabel;
+   setTimeout(function () {
+    btn.classList.remove('copied');
+    btn.textContent = label;
+   }, 1600);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+   navigator.clipboard.writeText(text).then(done, function () { fallback(); });
+  } else { fallback(); }
+  function fallback() {
+   var ta = document.createElement('textarea');
+   ta.value = text;
+   ta.style.position = 'fixed';
+   ta.style.opacity = '0';
+   document.body.應用程式endChild(ta);
+   ta.select();
+   try { document.execCommand('copy'); } catch (e) {}
+   document.body.removeChild(ta);
+   done();
+  }
+ }
+
+ var copyPromptBtn = document.getElementById('copyPrompt');
+ copyPromptBtn.addEventListener('click', function () {
+  copyText(PROMPT, copyPromptBtn, "複製提示詞", 'copied');
+ });
+
+ var boxes = Array.原型.slice.call(document.querySelectorAll('label.resonate input'));
+ var dots = {};
+ Array.原型.forEach.call(document.querySelectorAll('.規格說明-dot'), function (d) {
+  dots[d.getAttribute('data-n')] = d;
+  d.addEventListener('click', function () {
+   var card = document.getElementById('iv' + d.getAttribute('data-n'));
+   if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+ });
+
+ var rbNum = document.getElementById('rbNum');
+ var rbReply = document.getElementById('rbReply');
+ var rbCopy = document.getElementById('rbCopy');
+ var currentReply = '';
+
+ function update() {
+  var picked = boxes
+   .filter(function (b) { return b.checked; })
+   .map(function (b) { return parseInt(b.getAttribute('data-n'), 10); })
+   .sort(function (a, b) { return a - b; });
+
+  boxes.forEach(function (b) {
+   var n = b.getAttribute('data-n');
+   var card = document.getElementById('iv' + n);
+   if (card) card.classList.toggle('checked', b.checked);
+   if (dots[n]) dots[n].classList.toggle('on', b.checked);
+  });
+
+  rbNum.textContent = picked.length;
+  if (picked.length === 0) {
+   currentReply = '';
+   rbReply.textContent = "勾選有共鳴的介入方案，你的回覆會在這裡組合。";
+   rbReply.classList.remove('live');
+   rbCopy.disabled = true;
+  } else {
+   var list = picked.map(function (n) { return '#' + n; }).join(', ');
+   currentReply = "這些引起共鳴：" + list + "– 以#開頭" + picked[0];
+   rbReply.textContent = '“' + currentReply + '”';
+   rbReply.classList.add('live');
+   rbCopy.disabled = false;
+  }
+ }
+
+ boxes.forEach(function (b) { b.addEventListener('變更', update); });
+ rbCopy.addEventListener('click', function () {
+  if (currentReply) copyText(currentReply, rbCopy, "複製回覆", 'copied');
+ });
+
+ update();
+})();
+</script>
+</body>
+</html>

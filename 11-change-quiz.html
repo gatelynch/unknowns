@@ -1,0 +1,524 @@
+ 版權所有 2026 Anthropic PBC · SPDX-許可證-識別碼：Apache-2.0 
+html
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>合併前先測驗我——了解你的未知</title>
+<style>
+ :root{
+  --ivory:#FAF9F5; --paper:#FFFFFF; --slate:#141413; --clay:#D97757; --clay-d:#B85C3E;
+  --oat:#E3DACC; --olive:#788C5D; --g100:#F0EEE6; --g200:#E6E3DA; --g300:#D1CFC5;
+  --g500:#87867F; --g700:#3D3D3A;
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --sans: system-ui, -應用程式le-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+ }
+ *{box-sizing:border-box;margin:0;padding:0}
+ html{scroll-behavior:smooth}
+ body{
+  background:var(--ivory); color:var(--slate); font-family:var(--sans);
+  line-height:1.55; font-size:15px; padding:40px 20px 64px;
+ }
+ .page{max-width:980px;margin:0 auto}
+ h1,h2,h3{font-family:var(--serif);font-weight:500;letter-spacing:-0.015em;color:var(--slate)}
+
+ /* ---- page header ---- */
+ .topline{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+ .eyebrow{
+  font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:0.12em;
+  color:var(--g500);display:flex;align-items:center;gap:10px;
+ }
+ .eyebrow::before{content:"";display:inline-block;width:24px;height:2px;background:var(--clay);flex:none}
+ .backlink{font-family:var(--mono);font-size:12px;color:var(--g500);text-decoration:none;white-space:nowrap}
+ .backlink:hover{color:var(--clay-d)}
+ h1.pagetitle{font-size:34px;line-height:1.15;margin-bottom:10px}
+ .lede{color:var(--g700);font-size:16px;max-width:64ch;margin-bottom:26px}
+
+ /* ---- 提示詞 box ---- */
+ .提示詞card{
+  background:var(--paper);border:1.5px solid var(--g300);border-radius:14px;
+  padding:22px 26px;margin-bottom:36px;position:relative;
+ }
+ .提示詞card .label{
+  font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:0.12em;
+  color:var(--clay);margin-bottom:12px;
+ }
+ .提示詞card blockquote{
+  font-family:var(--serif);font-style:italic;font-size:17.5px;line-height:1.55;
+  color:var(--slate);border:none;
+ }
+ .copybtn{
+  position:absolute;top:18px;right:18px;font-family:var(--mono);font-size:11.5px;
+  padding:6px 12px;border:1.5px solid var(--g300);border-radius:8px;background:var(--g100);
+  color:var(--g700);cursor:pointer;transition:all .15s;
+ }
+ .copybtn:hover{border-color:var(--clay);color:var(--clay-d)}
+ .copybtn.copied{background:var(--olive);border-color:var(--olive);color:#fff}
+
+ /* ---- divider ---- */
+ .divider{display:flex;align-items:center;gap:16px;margin:0 0 34px;
+  font-family:var(--mono);font-size:12px;letter-spacing:0.12em;color:var(--g500);text-transform:uppercase;white-space:nowrap}
+ .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--g300)}
+
+ /* =================== ARTIFACT =================== */
+ .產物{background:var(--paper);border:1.5px solid var(--g300);border-radius:14px;overflow:hidden}
+ .art-head{padding:28px 34px 24px;border-bottom:1.5px solid var(--g200)}
+ .art-eyebrow{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:0.12em;color:var(--g500);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+ .art-eyebrow::before{content:"";display:inline-block;width:24px;height:2px;background:var(--clay);flex:none}
+ .art-head h2{font-size:26px;margin-bottom:6px}
+ .art-head .sub{color:var(--g700);font-size:14.5px;max-width:66ch}
+ .branchline{font-family:var(--mono);font-size:12.5px;color:var(--g700);background:var(--g100);
+  border:1.5px solid var(--g300);border-radius:8px;padding:6px 10px;display:inline-block;margin-top:14px;overflow-x:auto;max-width:100%}
+ .branchline .arr{color:var(--g500);margin:0 6px}
+
+ .art-body{padding:30px 34px 38px}
+ @media (max-width:560px){
+  .art-head{padding:22px 18px 18px}
+  .art-body{padding:22px 18px 30px}
+  h1.pagetitle{font-size:27px}
+ }
+
+ /* stat chips */
+ .stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:34px}
+ .statchip{flex:1;min-width:130px;background:var(--g100);border:1.5px solid var(--g300);border-radius:12px;padding:14px 18px}
+ .statchip .num{font-family:var(--serif);font-size:28px;font-weight:500;letter-spacing:-0.02em;line-height:1.1}
+ .statchip .num.add{color:var(--olive)}
+ .statchip .num.del{color:var(--clay-d)}
+ .statchip .cap{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--g500);margin-top:4px}
+
+ .art-section{margin-bottom:38px}
+ .art-section h3{font-size:20px;margin-bottom:6px}
+ .art-section .secnote{color:var(--g500);font-size:13.5px;margin-bottom:16px}
+ .art-section p{color:var(--g700);margin-bottom:12px;max-width:70ch}
+ .art-section p strong{color:var(--slate)}
+
+ /* mental model diagram */
+ .flow-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+ @media (max-width:680px){.flow-pair{grid-template-columns:1fr}}
+ .flowcard{border:1.5px solid var(--g300);border-radius:12px;padding:16px 16px 18px;background:var(--ivory)}
+ .flowcard.after{border-color:var(--clay)}
+ .flowcard .fc-label{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px}
+ .flowcard.before .fc-label{color:var(--g500)}
+ .flowcard.after .fc-label{color:var(--clay-d)}
+ .fnode{border:1.5px solid var(--g300);background:var(--paper);border-radius:8px;padding:7px 12px;
+  font-family:var(--mono);font-size:12px;color:var(--g700);text-align:center}
+ .fnode.new{border-color:var(--clay);background:#FBF1EC;color:var(--clay-d)}
+ .fnode.oatf{background:var(--oat)}
+ .farrow{display:flex;justify-content:center;align-items:center;height:22px;color:var(--g500);font-size:13px;line-height:1}
+ .farrow.lab{gap:8px;font-family:var(--mono);font-size:10.5px}
+ .fsplit{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ .fsplit .farrow{height:20px}
+
+ /* behavior blocks */
+ .beh{border:1.5px solid var(--g300);border-radius:12px;margin-bottom:14px;overflow:hidden}
+ .beh-head{display:flex;align-items:baseline;gap:12px;padding:14px 18px;background:var(--g100)}
+ .beh-num{font-family:var(--mono);font-size:12px;color:var(--clay-d);font-weight:600;flex:none}
+ .beh-head h4{font-family:var(--serif);font-weight:500;font-size:16.5px;letter-spacing:-0.01em}
+ .beh-body{padding:14px 18px 16px}
+ .beh-row{display:grid;grid-template-columns:58px 1fr;gap:10px;margin-bottom:9px;font-size:14px}
+ .beh-row:last-child{margin-bottom:0}
+ .beh-row .k{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:0.1em;color:var(--g500);padding-top:3px}
+ .beh-row .v{color:var(--g700)}
+ .fchip{display:inline-block;font-family:var(--mono);font-size:11.5px;background:var(--g100);
+  border:1px solid var(--g300);border-radius:6px;padding:1.5px 7px;color:var(--g700);white-space:nowrap;margin:1px 2px 1px 0}
+
+ /* leans-on callout */
+ .leans{border:1.5px solid var(--g300);border-left:4px solid var(--olive);border-radius:12px;
+  background:var(--ivory);padding:16px 20px}
+ .leans .lab{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--olive);margin-bottom:6px}
+ .leans p{margin-bottom:0;font-size:14px}
+
+ /* ---- 測驗 ---- */
+ .測驗-rule{display:flex;align-items:center;gap:16px;margin:44px 0 8px;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:0.12em;color:var(--g500);text-transform:uppercase}
+ .測驗-rule::before,.測驗-rule::after{content:"";flex:1;height:1px;background:var(--g300)}
+ .測驗-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+ .測驗-intro h3{font-size:22px}
+ .測驗-intro .qsub{color:var(--g500);font-size:13.5px}
+ .scorebox{font-family:var(--mono);font-size:12.5px;color:var(--g700);background:var(--g100);
+  border:1.5px solid var(--g300);border-radius:10px;padding:8px 14px;white-space:nowrap}
+ .scorebox b{color:var(--slate)}
+
+ .q{border:1.5px solid var(--g300);border-radius:12px;padding:18px 20px;margin-bottom:16px;background:var(--paper)}
+ .q.answered-right{border-color:var(--olive)}
+ .q.answered-wrong{border-color:var(--clay)}
+ .q .qnum{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--g500);margin-bottom:6px}
+ .q .qtext{font-family:var(--serif);font-size:17px;line-height:1.45;margin-bottom:14px;letter-spacing:-0.01em}
+ .q .qtext code{font-family:var(--mono);font-size:14px;background:var(--g100);border:1px solid var(--g300);border-radius:5px;padding:1px 5px}
+ .opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;
+  border:1.5px solid var(--g300);border-radius:9px;background:var(--ivory);padding:10px 14px;
+  margin-bottom:8px;cursor:pointer;font:inherit;font-size:14px;color:var(--g700);transition:border-color .12s, background .12s}
+ .opt:hover{border-color:var(--g500)}
+ .opt .key{font-family:var(--mono);font-size:11.5px;color:var(--g500);flex:none;padding-top:2px}
+ .opt.sel-right{border-color:var(--olive);background:#F1F4EB;color:var(--slate)}
+ .opt.sel-right .key{color:var(--olive)}
+ .opt.sel-wrong{border-color:var(--clay);background:#FBF1EC;color:var(--slate)}
+ .opt.sel-wrong .key{color:var(--clay-d)}
+ .opt.reveal-right{border-color:var(--olive)}
+ .opt:disabled{cursor:default;opacity:1}
+ .opt.dim{opacity:.55}
+ .fb{border-radius:9px;padding:12px 15px;font-size:13.5px;margin-top:4px;display:none}
+ .fb.show{display:block}
+ .fb.good{background:#F1F4EB;border:1.5px solid var(--olive);color:var(--g700)}
+ .fb.good .fbtag{color:var(--olive)}
+ .fb.bad{background:#FBF1EC;border:1.5px solid var(--clay);color:var(--g700)}
+ .fb.bad .fbtag{color:var(--clay-d)}
+ .fbtag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:5px}
+ .fb .excerpt{margin-top:8px;border-left:3px solid var(--g300);padding:6px 12px;background:var(--paper);
+  border-radius:0 7px 7px 0;font-size:13px;color:var(--g700);font-style:italic;font-family:var(--serif)}
+ .fb .exlab{font-family:var(--mono);font-style:normal;font-size:10.5px;text-transform:uppercase;letter-spacing:0.09em;color:var(--g500);display:block;margin-bottom:3px}
+
+ /* result cards */
+ .result{display:none;margin-top:26px}
+ .result.show{display:block}
+ .cleared{border:1.5px solid var(--olive);border-radius:14px;background:#F1F4EB;padding:24px 26px}
+ .cleared .clr-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+ .clr-badge{width:34px;height:34px;border-radius:50%;background:var(--olive);color:#fff;display:flex;
+  align-items:center;justify-content:center;font-size:17px;flex:none}
+ .cleared h3{font-size:21px}
+ .cleared .clr-sub{color:var(--g700);font-size:14px;margin-bottom:16px}
+ .合併list{list-style:none}
+ .合併list li{display:flex;gap:10px;align-items:baseline;font-family:var(--mono);font-size:12.5px;
+  color:var(--g700);padding:7px 0;border-bottom:1px dashed var(--g300)}
+ .合併list li:last-child{border-bottom:none}
+ .合併list .tick{color:var(--olive);font-weight:700;flex:none}
+ .合併list .pend{color:var(--g500);flex:none}
+ .reread{border:1.5px solid var(--clay);border-radius:14px;background:#FBF1EC;padding:22px 26px}
+ .reread h3{font-size:19px;margin-bottom:4px}
+ .reread p{color:var(--g700);font-size:14px;margin-bottom:12px}
+ .reread ul{list-style:none}
+ .reread li{margin-bottom:7px}
+ .reread a{color:var(--clay-d);font-size:14px;text-decoration:none;border-bottom:1px solid var(--clay)}
+ .reread a:hover{color:var(--slate)}
+ .retry{margin-top:14px;font-family:var(--mono);font-size:12px;padding:8px 16px;border:1.5px solid var(--g300);
+  border-radius:8px;background:var(--paper);color:var(--g700);cursor:pointer}
+ .retry:hover{border-color:var(--clay);color:var(--clay-d)}
+
+ footer{margin-top:44px;text-align:center;font-size:13px;color:var(--g500)}
+ footer a{color:var(--clay-d);text-decoration:none}
+ footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="page">
+ ============ 頁眉 ============ 
+<div class="topline">
+<div class="eyebrow">了解你的未知 · 實作後</div>
+<a class="backlink" href="index.html">← 所有範例</a>
+</div>
+<h1 class="pagetitle">合併前先測驗我</h1>
+<p class="lede">要求報告 <em>你必須通過測驗</em> 將“我略讀了差異”轉變為經過驗證的理解 - 該產物不會讓你感到完成，直到你真正完成為止。</p>
+<div class="提示詞card">
+<div class="label">提示詞</div>
+<button class="copybtn" id="copyBtn">複製提示詞</button>
+<blockquote id="提示詞Text">我想確保自己完全理解這次變更中發生的所有事情。請給我一份關於這些變更的 HTML 報告，讓我能結合上下文、直覺以及具體執行內容等進行閱讀與理解，並在底部附上一個關於這些變更的測驗，且我必須通過該測驗。</blockquote>
+</div>
+<div class="divider">Claude 產出的內容</div>
+ ============ 神器 ============ 
+<div class="產物">
+<div class="art-head">
+<div class="art-eyebrow">Acme · 合併準備報告</div>
+<h2>剪輯匯出：發生了什麼變化以及原因</h2>
+<p class="sub">一個 14 檔案差異，新增了伺服器端剪輯匯出以審核線程。閱讀下面的三個部分，然後通過測驗。如果你做不到，那麼你還沒準備好合併——這就是重點。</p>
+<div class="branchline">feature/clip-export<span class="arr">→</span>主要 · 14 個文件 · 9 次提交</div>
+</div>
+<div class="art-body">
+ 統計資料 
+<div class="stats">
+<div class="statchip"><div class="num">14</div><div class="cap">文件已更改</div></div>
+<div class="statchip"><div class="num add">+612</div><div class="cap">已新增行</div></div>
+<div class="statchip"><div class="num del">−148</div><div class="cap">行已刪除</div></div>
+</div>
+ 心理模型 
+<div class="art-section" id="sec-model">
+<h3>心智模型</h3>
+<p class="secnote">一張圖表相當於 14 個檔案：匯出請求現在的位置與之前的位置。</p>
+<p>在此更改之前，“匯出剪輯”意味著瀏覽器在客戶端縫合幀 <code>MediaRecorder</code> 並上傳了結果——在 Safari 上速度緩慢、選項卡鎖定且損壞。現在只有客戶端 <strong>要求</strong> 出口；新的工作人員將其從原始媒體渲染到伺服器端，客戶端輪詢作業，直到出現簽署的下載 URL。</p>
+<div class="flow-pair">
+<div class="flowcard before">
+<div class="fc-label">之前 · 客戶端渲染</div>
+<div class="fnode">ReviewPlayer.tsx</div>
+<div class="farrow">↓</div>
+<div class="fnode">MediaRecorder 擷取（選項卡內）</div>
+<div class="farrow lab"><span>↓</span><span>~40–90 秒，選項卡已鎖定</span></div>
+<div class="fnode">PUT /上傳（整個檔案）</div>
+<div class="farrow">↓</div>
+<div class="fnode oatf">S3 出口/桶</div>
+</div>
+<div class="flowcard after">
+<div class="fc-label">· 伺服器端工作之後</div>
+<div class="fnode">ReviewPlayer.tsx</div>
+<div class="farrow lab"><span>↓</span><span>POST /api/exports （傳回作業 ID）</span></div>
+<div class="fnode new">匯出工人（新，ffmpeg）</div>
+<div class="fsplit">
+<div><div class="farrow">↓</div><div class="fnode oatf">S3 出口/桶</div></div>
+<div><div class="farrow">↓</div><div class="fnode new">職位表（新）</div></div>
+</div>
+<div class="farrow lab"><span>↓</span><span>客戶端每 2 秒輪詢一次</span></div>
+<div class="fnode">GET /api/exports/:id → 簽章 URL</div>
+</div>
+</div>
+</div>
+ 不明顯的行為 
+<div class="art-section" id="sec-behaviors">
+<h3>這引入了三種不明顯的行為</h3>
+<p class="secnote">差異略讀不會告訴你這些部分。每一個都是經過深思熟慮的——原因如下。</p>
+<div class="beh" id="beh-1">
+<div class="beh-head"><span class="beh-num">01</span><h4>匯出從原始上傳渲染，而不是審閱者觀看的代理</h4></div>
+<div class="beh-body">
+<div class="beh-row"><span class="k">什麼</span><span class="v">工人拉著 <code class="fchip">media/originals/</code>，從來沒有720p審核代理。因此，匯出的剪輯可以看起來 <em>更銳利</em> 比審閱者在繪製annotation時所看到的內容更重要。</span></div>
+<div class="beh-row"><span class="k">為什麼</span><span class="v">剪輯師匯出剪輯並交給客戶；運送壓縮代理商會讓他們感到尷尬。annotation座標以標準化 (0–1) 方式存儲，因此它們可以正確地重新投影到全解析度幀上。</span></div>
+<div class="beh-row"><span class="k">哪裡</span><span class="v"><span class="fchip">worker/export/render.ts:41</span> <span class="fchip">worker/export/burn_in.ts:88</span></span></div>
+</div>
+</div>
+<div class="beh" id="beh-2">
+<div class="beh-head"><span class="beh-num">02</span><h4>匯出作業在工人崩潰後倖存下來 - 通過可見性超時，而不是重試</h4></div>
+<div class="beh-body">
+<div class="beh-row"><span class="k">什麼</span><span class="v">透過設定聲明作業行 <code class="fchip">locked_until = now() + 10min</code>。如果工作人員在渲染過程中死亡，則不會重試；鎖就會過期，下一個空閒的工人會從頭開始接替工作。</span></div>
+<div class="beh-row"><span class="k">為什麼</span><span class="v">ffmpeg 渲染在飛行中不是冪等的，重試佇列需要我們還不想要的死信處理。鎖到期為一列提供了至少一次語義。結果：崩潰的作業在恢復之前看起來「正在處理」長達 10 分鐘。</span></div>
+<div class="beh-row"><span class="k">哪裡</span><span class="v"><span class="fchip">db/migrations/0142_export_jobs.sql</span> <span class="fchip">worker/export/claim.ts:19</span></span></div>
+</div>
+</div>
+<div class="beh" id="beh-3">
+<div class="beh-head"><span class="beh-num">03</span><h4>下載 URL 會在 24 小時後過期 — 匯出本身的有效期限為 7 天</h4></div>
+<div class="beh-body">
+<div class="beh-row"><span class="k">什麼</span><span class="v">傳回的簽名 S3 URL <code class="fchip">GET /api/exports/:id</code> 有效期為 24 小時，但直到觸發 7 天生命週期規則後才會刪除基礎物件。重新點擊端點會產生一個新的 URL，無需重新渲染。</span></div>
+<div class="beh-row"><span class="k">為什麼</span><span class="v">短 URL 限制workspace以外的連結轉發（匯出可以包含未發布的片段）；較長的物件 TTL 意味著陳舊的 Slack 連結需要一次 API 呼叫才能恢復，而不是 90 秒的重新渲染。</span></div>
+<div class="beh-row"><span class="k">哪裡</span><span class="v"><span class="fchip">api/exports/get.ts:57</span> <span class="fchip">infra/s3_lifecycle.tf:23</span></span></div>
+</div>
+</div>
+</div>
+ 靠在 
+<div class="art-section" id="sec-leans">
+<div class="leans">
+<div class="lab">這依賴於現有的行為</div>
+<p><strong>workspace範圍內的簽章 URL 驗證。</strong> <span class="fchip">取得 /api/exports/:id</span> 它自己不進行權限檢查——它重複使用 <span class="fchip">需要工作空間成員</span> 已經保護每個媒體路由的middleware。如果该中间件的会话处理发生变化（有一个关于来宾审阅者会话的开放票证 BL-2214），导出下载也会随之变化。此差異中沒有任何內容可以標記這一點。</p>
+</div>
+</div>
+ ============ 測驗 ============ 
+<div class="測驗-rule">第 2 部分·證明</div>
+<div class="測驗-intro">
+<div>
+<h3>合併前的六個問題</h3>
+<div class="qsub">這不是瑣事——每一項都是你在事件或審核期間必須做出的正確決定。</div>
+</div>
+<div class="scorebox">Score: <b id="scoreNow">0</b> / <b>6</b> · <span id="answeredNow">0</span> 回答了</div>
+</div>
+<div id="測驗"></div>
+ 結果 
+<div class="result" id="resPass">
+<div class="cleared">
+<div class="clr-head"><div class="clr-badge">✓</div><h3>清除合併</h3></div>
+<p class="clr-sub">6/6 — 你可以向收到尋呼的任何人解釋此變更。標準清單如下。</p>
+<ul class="合併list">
+<li><span class="tick">✓</span>理解已驗證（本測驗，6/6）</li>
+<li><span class="tick">✓</span>CI 綠色功能/剪輯匯出 · 412 項測試</li>
+<li><span class="tick">✓</span>遷移 0142 已審核 — 新增，無回填</li>
+<li><span class="pend">○</span>將上面的摘要擠壓合併作為提交主體</li>
+<li><span class="pend">○</span>部署後觀看 Export-worker 儀表板 30 分鐘</li>
+<li><span class="pend">○</span>注意合併annotation中的 BL-2214 依賴性</li>
+</ul>
+</div>
+</div>
+<div class="result" id="resFail">
+<div class="reread">
+<h3 id="failTitle">還沒有——重新閱讀這些部分</h3>
+<p>你錯過了以下問題。這些差距直接映射回報告：</p>
+<ul id="failLinks"></ul>
+<button class="retry" id="retryBtn">重置測驗並重試</button>
+</div>
+</div>
+</div><!-- /art-body -->
+</div><!-- /產物 -->
+<footer>屬於 <a href="index.html">了解你的未知</a> — 部落格文章的搭配範例。</footer>
+</div>
+<script>
+(function(){
+ // ---- copy 提示詞 ----
+ var copyBtn = document.getElementById('copyBtn');
+ copyBtn.addEventListener('click', function(){
+  var t = document.getElementById('提示詞Text').textContent;
+  function done(){ copyBtn.textContent='Copied'; copyBtn.classList.add('copied');
+   setTimeout(function(){copyBtn.textContent="複製提示詞";copyBtn.classList.remove('copied');},1600); }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+   navigator.clipboard.writeText(t).then(done, function(){ fallback(); });
+  } else { fallback(); }
+  function fallback(){
+   var ta=document.createElement('textarea'); ta.value=t; document.body.應用程式endChild(ta);
+   ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); done();
+  }
+ });
+
+ // ---- 測驗 data ----
+ var QS = [
+  {
+   q:"一位審閱者說他們匯出的剪輯「看起來與我annotation的不同」。假設沒有bug，為什麼呢？",
+   opts:[
+    "匯出以較低的位元率重新編碼以保持檔案較小",
+    "匯出從全解析度原始渲染，同時他們審核了 720p 代理",
+    "當來源高於 1080p 時，annotation會被刪除",
+    "Safari 渲染匯出的方式與 Chrome 不同"
+   ],
+   correct:1,
+   reinforce:"右 - 匯出拉媒體/原件/，因此剪輯可以比審閱者觀看的代理更清晰。符合預期，不是錯誤。",
+   excerptFrom:"行為01", anchor:'beh-1', anchorLabel:"行為 01 — 從原始匯出渲染",
+   excerpt:"工作人員提取媒體/原件/，而不是 720p 審核代理。因此，匯出的剪輯看起來比審閱者繪製annotation時看到的更清晰。"
+  },
+  {
+   q:"匯出工作容器在渲染中途被 OOM 殺死。那份工作會怎樣？",
+   opts:[
+    "它移動到死信佇列以進行手動重播",
+    "立即在另一個工人身上重試",
+    "它顯示“正在處理”，直到 10 分鐘鎖定到期，然後另一個工作人員從頭開始重新啟動它",
+    "它永久失敗，使用者必須再次點擊“匯出”"
+   ],
+   correct:2,
+   reinforce:"確實如此 – 不存在重試佇列。恢復是鎖定到期：長達 10 分鐘的明顯“處理”，然後重新渲染。",
+   excerptFrom:"行為02", anchor:'beh-2', anchorLabel:"行為 02 — 透過鎖定過期進行崩潰恢復",
+   excerpt:"如果工作人員在渲染過程中死亡，則不會重試；鎖就會過期，下一個空閒的工作線程會從頭開始接起作業……崩潰的作業在恢復之前看起來會「處理」長達 10 分鐘。"
+  },
+  {
+   q:"客戶將匯出連結貼到 Slack 中；一名隊友在 3 天後點擊它並收到 S3「過期」錯誤。最便宜的修復？",
+   opts:[
+    "重新運行匯出 – 檔案在 24 小時後被刪除",
+    "再次點擊 GET /api/exports/:id – 該物件仍然存在 7 天，因此它只是建立一個新的簽章 URL",
+    'Bump the lifecycle rule in s3_lifecycle.tf to 30 days',
+    "請管理員將匯出/儲存桶設為公開可讀"
+   ],
+   correct:1,
+   reinforce:"是 – 僅 URL 已過期（24 小時）。該物件存在 7 天，因此新的 GET 返回一個新鏈接，重新渲染成本為零。",
+   excerptFrom:"行為03", anchor:'beh-3', anchorLabel:"行為 03 — URL TTL 與物件 TTL",
+   excerpt:"簽署的 S3 URL 的有效期為 24 小時，但底層物件只有在觸發 7 天生命週期規則後才會被刪除。重新點擊端點會產生一個新的 URL，無需重新渲染。"
+  },
+  {
+   q:"票證 BL-2214 更改了來賓審核者會話的驗證方式。為什麼這個差異會讓這張票的風險更大？",
+   opts:[
+    "客人現在可以觸發無限匯出並耗盡工作池",
+    "匯出下載沒有自己的驗證檢查 - 它們繼承了 requireWorkspaceMember 所做的任何事情，因此會話變更會默默地更改誰可以下載",
+    "作業表以明文形式儲存訪客會話令牌",
+    "事實並非如此 – 匯出與會話處理無關"
+   ],
+   correct:1,
+   reinforce:"正確 — GET /api/exports/:id 大量借用 requireWorkspaceMember。更改middleware，更改匯出存取權限，此差異中沒有任何內容可以對其進行標記。",
+   excerptFrom:"這依賴於現有的行為", anchor:'sec-leans', anchorLabel:"Callout – 依賴workspace驗證middleware",
+   excerpt:"GET /api/exports/:id 不進行自己的權限檢查 - 它重複使用 requireWorkspaceMember middleware - 如果該middleware的會話處理發生變化 (BL-2214)，匯出下載也會隨之變化。"
+  },
+  {
+   q:"部署後，使用者報告「匯出卡在處理中 15 分鐘」。考慮到設計，15 分鐘能告訴你什麼？",
+   opts:[
+    "沒什麼——長渲染對於大剪輯來說是正常的",
+    "客戶端的 2 秒輪詢循環可能已斷開",
+    "除了單次崩潰之外，還有其他問題：一次崩潰會在 10 分鐘鎖定視窗內自我修復，因此 15 分鐘以上意味著重複失敗或工作執行緒被卡住",
+    "S3生命週期規則刪除了檔案中渲染"
+   ],
+   correct:2,
+   reinforce:"對 - 10 分鐘鎖定是自我修復預算。任何超過這個值的情況都意味著工作會反覆失敗，或者工作人員陷入困境：值得頁面，而不是值得等待。",
+   excerptFrom:"行為02", anchor:'beh-2', anchorLabel:"行為 02 — 10 分鐘恢復窗口",
+   excerpt:"鎖到期為一列提供了至少一次語義。結果：崩潰的作業在恢復之前看起來「正在處理」長達 10 分鐘。"
+  },
+  {
+   q:"為什麼即使匯出的渲染解析度與審核播放器的解析度不同，annotation仍然會出現在正確的位置？",
+   opts:[
+    "工作人員首先縮小匯出以匹配代理分辨率",
+    "annotation座標以標準化 (0–1) 形式存儲，並重新投影到渲染的任何幀大小上",
+    "客戶端在匯出時重新發送annotation像素",
+    'burn_in.ts snaps annotations to a fixed 1080p grid'
+   ],
+   correct:1,
+   reinforce:"是的 – 標準化座標使「從原始渲染」變得安全。像素空間儲存會破壞此差異中的每個annotation。",
+   excerptFrom:"行為01", anchor:'beh-1', anchorLabel:"行為 01 — 標準化annotation座標",
+   excerpt:"annotation座標以標準化 (0–1) 方式存儲，因此它們可以正確地重新投影到全解析度幀上。"
+  }
+ ];
+
+ var KEYS=['A','B','C','D'];
+ var answers=new Array(QS.length).fill(null); // true/false/null
+ var 測驗El=document.getElementById('測驗');
+
+ function build(){
+  測驗El.innerHTML='';
+  answers=new Array(QS.length).fill(null);
+  QS.forEach(function(item,qi){
+   var qd=document.createElement('div'); qd.className='q'; qd.id='q'+qi;
+   var h="<div class=\"qnum\">問題"+(qi+1)+' of '+QS.length+"</div>"
+    +"<div類別=“qtext”>"+item.q+"</div>";
+   item.opts.forEach(function(o,oi){
+    h+="<button class=\"opt\" data-q=\""+qi+"“資料-o=”"+oi+"\"><跨距類=“鍵”>"+KEYS[oi]+"</span><span>"+o+"</span></按鈕>";
+   });
+   h+="<div 類別=“fb”id=“fb”"+qi+"\"></div>";
+   qd.innerHTML=h;
+   測驗El.應用程式endChild(qd);
+  });
+  updateScore();
+  document.getElementById('resPass').classList.remove('show');
+  document.getElementById('resFail').classList.remove('show');
+ }
+
+ 測驗El.addEventListener('click', function(e){
+  var btn=e.target.closest('.opt'); if(!btn||btn.disabled) return;
+  var qi=+btn.dataset.q, oi=+btn.dataset.o, item=QS[qi];
+  if(answers[qi]!==null) return;
+  var right=(oi===item.correct);
+  answers[qi]=right;
+  var qd=document.getElementById('q'+qi);
+  qd.classList.add(right?'answered-right':'answered-wrong');
+  qd.querySelectorAll('.opt').forEach(function(b){
+   b.disabled=true;
+   var boi=+b.dataset.o;
+   if(boi===oi) b.classList.add(right?'sel-right':'sel-wrong');
+   else if(boi===item.correct && !right) b.classList.add('reveal-right');
+   else b.classList.add('dim');
+  });
+  var fb=document.getElementById('fb'+qi);
+  if(right){
+   fb.className="FB 好戲";
+   fb.innerHTML="<div class=\"fbtag\">&#10003;正確</div>"+item.reinforce;
+  } else {
+   fb.className="FB 糟糕的表演";
+   fb.innerHTML="<div class=\"fbtag\">不完全是－正確答案是"+KEYS[item.correct]+"</div>"
+    +"來自報告："
+    +"<div class=\"excerpt\"><span class=\"exlab\">"+item.excerptFrom+"</span>"+item.excerpt+"</div>";
+  }
+  updateScore();
+  if(answers.every(function(a){return a!==null;})) finish();
+ });
+
+ function updateScore(){
+  var score=answers.filter(function(a){return a===true;}).length;
+  var done=answers.filter(function(a){return a!==null;}).length;
+  document.getElementById('scoreNow').textContent=score;
+  document.getElementById('answeredNow').textContent=done;
+ }
+
+ function finish(){
+  var score=answers.filter(function(a){return a===true;}).length;
+  if(score===QS.length){
+   document.getElementById('resPass').classList.add('show');
+   document.getElementById('resPass').scrollIntoView({behavior:'smooth',block:'nearest'});
+  } else {
+   var missed=[]; answers.forEach(function(a,i){ if(a!==true) missed.push(i); });
+   document.getElementById('failTitle').textContent="還沒有："+score+'/'+QS.length+"– 重新閱讀這些部分";
+   var seen={}, ul=document.getElementById('failLinks'); ul.innerHTML='';
+   missed.forEach(function(i){
+    var it=QS[i];
+    if(seen[it.anchor]) return; seen[it.anchor]=true;
+    var li=document.createElement('li');
+    li.innerHTML="<a href=\"#"+it.anchor+'">'+it.anchorLabel+"</a>";
+    ul.應用程式endChild(li);
+   });
+   document.getElementById('resFail').classList.add('show');
+   document.getElementById('resFail').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+ }
+
+ document.getElementById('retryBtn').addEventListener('click', function(){
+  build();
+  document.getElementById('測驗').scrollIntoView({behavior:'smooth',block:'start'});
+ });
+
+ build();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,561 @@
+ 版權所有 2026 Anthropic PBC · SPDX-許可證-識別碼：Apache-2.0 
+html
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>提案與說明文件－了解你的未知</title>
+<style>
+ :root {
+  --ivory:#FAF9F5; --paper:#FFFFFF; --slate:#141413; --clay:#D97757; --clay-d:#B85C3E;
+  --oat:#E3DACC; --olive:#788C5D; --g100:#F0EEE6; --g200:#E6E3DA; --g300:#D1CFC5;
+  --g500:#87867F; --g700:#3D3D3A;
+  --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --sans: system-ui, -應用程式le-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+ }
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+ body {
+  background: var(--ivory); color: var(--slate);
+  font-family: var(--sans); line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+ }
+ .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+ h1, h2, h3 { font-family: var(--serif); font-weight: 500; letter-spacing: -0.015em; }
+
+ /* ---------- page header ---------- */
+ header.page { padding: 56px 0 40px; border-bottom: 1.5px solid var(--g300); position: relative; }
+ .eyebrow {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--g500); margin-bottom: 18px;
+  display: flex; align-items: center; gap: 12px;
+ }
+ .eyebrow::before { content: ""; width: 24px; height: 1.5px; background: var(--clay); flex: none; }
+ .backlink {
+  position: absolute; top: 60px; right: 0;
+  font-family: var(--mono); font-size: 12px; color: var(--g500); text-decoration: none;
+ }
+ .backlink:hover { color: var(--clay-d); }
+ header.page h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.08; margin: 0 0 10px; }
+ .lede { font-size: 16.5px; color: var(--g700); max-width: 640px; }
+
+ /* ---------- 提示詞 box ---------- */
+ .提示詞card {
+  background: var(--paper); border: 1.5px solid var(--g300); border-radius: 14px;
+  padding: 22px 26px; margin: 30px 0 0; position: relative;
+ }
+ .提示詞card .label {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--clay); margin-bottom: 12px;
+ }
+ .提示詞card blockquote {
+  font-family: var(--serif); font-style: italic; font-size: 17.5px;
+  line-height: 1.5; color: var(--slate); max-width: 720px;
+ }
+ .copybtn {
+  position: absolute; top: 18px; right: 18px;
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em;
+  background: var(--g100); color: var(--g700); border: 1.5px solid var(--g300);
+  border-radius: 8px; padding: 6px 12px; cursor: pointer;
+ }
+ .copybtn:hover { border-color: var(--clay); color: var(--clay-d); }
+ .copybtn.done { background: var(--olive); border-color: var(--olive); color: #fff; }
+
+ /* ---------- divider ---------- */
+ .divider {
+  display: flex; align-items: center; gap: 16px; margin: 44px 0 36px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--g500);
+ }
+ .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--g300); }
+
+ /* ================= ARTIFACT ================= */
+ .產物 {
+  background: var(--paper); border: 1.5px solid var(--g300); border-radius: 14px;
+  padding: clamp(22px, 4vw, 44px); margin-bottom: 48px;
+ }
+ .doc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
+ .doc-eyebrow {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--g500);
+  display: flex; align-items: center; gap: 10px;
+ }
+ .doc-eyebrow::before { content: ""; width: 24px; height: 1.5px; background: var(--clay); flex: none; }
+ .timechip {
+  font-family: var(--mono); font-size: 11.5px; color: var(--g700);
+  background: var(--oat); border-radius: 999px; padding: 5px 13px; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 7px;
+ }
+ .timechip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--clay); }
+ .產物 h2.doc-title { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.12; margin: 10px 0 4px; }
+ .doc-sub { color: var(--g500); font-size: 14px; margin-bottom: 26px; }
+ .doc-sub strong { color: var(--g700); font-weight: 600; }
+
+ .產物 h3.sec {
+  font-size: 21px; margin: 38px 0 14px; padding-top: 26px;
+  border-top: 1.5px solid var(--g200);
+  display: flex; align-items: baseline; gap: 10px;
+ }
+ .產物 h3.sec .n { font-family: var(--mono); font-size: 12px; color: var(--clay); font-weight: 400; }
+
+ /* ---------- 展示 player ---------- */
+ .展示-shell { position: relative; }
+ .展示 {
+  background: var(--g100); border: 1.5px solid var(--g300); border-radius: 12px;
+  overflow: hidden; user-select: none;
+ }
+ .bl-titlebar {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--paper); border-bottom: 1.5px solid var(--g200);
+  padding: 9px 14px;
+ }
+ .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--g300); flex: none; }
+ .bl-name { font-family: var(--mono); font-size: 11px; color: var(--g500); margin-left: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+ .bl-body { display: grid; grid-template-columns: 1fr 232px; min-height: 268px; }
+ @media (max-width: 620px) { .bl-body { grid-template-columns: 1fr; } .bl-panel { border-left: none !important; border-top: 1.5px solid var(--g200); } }
+
+ /* video pane */
+ .bl-stage { position: relative; padding: 16px 16px 12px; display: flex; flex-direction: column; }
+ .bl-video {
+  flex: 1; min-height: 148px; border-radius: 8px; position: relative;
+  background:
+   radial-gradient(120px 80px at 68% 34%, #4a4b45 0%, transparent 70%),
+   linear-gradient(160deg, #3D3D3A 0%, #232322 100%);
+  border: 1.5px solid var(--g300);
+ }
+ .bl-play {
+  position: absolute; left: 12px; bottom: 10px; width: 0; height: 0;
+  border-left: 11px solid rgba(250,249,245,.85); border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+ }
+ .bl-tc { position: absolute; right: 12px; bottom: 8px; font-family: var(--mono); font-size: 10.5px; color: rgba(250,249,245,.7); }
+ .bl-pin {
+  position: absolute; top: -7px; width: 14px; height: 14px; border-radius: 50% 50% 50% 2px;
+  background: var(--g500); transform: rotate(45deg); transition: background .25s;
+ }
+ .bl-pin.on { background: var(--clay); }
+ .bl-timeline { position: relative; height: 26px; margin-top: 14px; }
+ .bl-track { position: absolute; left: 0; right: 0; top: 11px; height: 4px; border-radius: 2px; background: var(--g300); }
+ .bl-track .fill { width: 34%; height: 100%; border-radius: 2px; background: var(--g500); }
+
+ /* annotation panel */
+ .bl-panel { background: var(--paper); border-left: 1.5px solid var(--g200); padding: 12px 12px 10px; display: flex; flex-direction: column; }
+ .bl-panel-head {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--g500); display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px;
+ }
+ .bl-count { color: var(--clay-d); }
+ .bl-ann {
+  display: flex; gap: 9px; align-items: flex-start; padding: 8px 8px;
+  border-radius: 8px; border: 1.5px solid transparent; transition: background .25s, border-color .25s;
+ }
+ .bl-ann.sel { background: var(--g100); border-color: var(--g300); }
+ .bl-check {
+  width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid var(--g300);
+  background: var(--paper); flex: none; margin-top: 2px; position: relative; transition: background .2s, border-color .2s;
+ }
+ .bl-ann.sel .bl-check { background: var(--clay); border-color: var(--clay); }
+ .bl-ann.sel .bl-check::after {
+  content: ""; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px;
+  border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+ }
+ .bl-ann .who { font-size: 11.5px; font-weight: 600; line-height: 1.35; }
+ .bl-ann .who .t { font-family: var(--mono); font-weight: 400; font-size: 10px; color: var(--g500); margin-left: 5px; }
+ .bl-ann .txt { font-size: 11px; color: var(--g700); line-height: 1.4; }
+ .bl-export {
+  margin-top: auto; align-self: stretch; text-align: center;
+  font-family: var(--sans); font-size: 12.5px; font-weight: 600; color: #fff;
+  background: var(--slate); border: none; border-radius: 8px; padding: 9px 0;
+  transition: background .2s, transform .12s; pointer-events: none;
+ }
+ .bl-export.armed { background: var(--clay); }
+ .bl-export.pressed { background: var(--clay-d); transform: scale(.965); }
+
+ /* progress overlay */
+ .bl-progress {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(20,20,19,.38); opacity: 0; pointer-events: none; transition: opacity .3s;
+ }
+ .bl-progress.show { opacity: 1; }
+ .bl-prog-card {
+  background: var(--paper); border-radius: 12px; padding: 20px 24px; width: min(300px, 84%);
+  box-shadow: 0 12px 32px rgba(20,20,19,.22);
+ }
+ .bl-prog-card .pt { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+ .bl-prog-card .ps { font-family: var(--mono); font-size: 10.5px; color: var(--g500); margin-bottom: 12px; min-height: 14px; }
+ .bl-bar { height: 6px; border-radius: 3px; background: var(--g200); overflow: hidden; }
+ .bl-bar .b { width: 0%; height: 100%; background: var(--clay); border-radius: 3px; transition: width 1.7s cubic-bezier(.3,.7,.3,1); }
+
+ /* toast */
+ .bl-toast {
+  position: absolute; left: 50%; bottom: 14px; transform: translate(-50%, 16px);
+  background: var(--slate); color: var(--ivory); border-radius: 10px;
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  opacity: 0; transition: opacity .35s, transform .35s; max-width: 92%;
+  box-shadow: 0 10px 26px rgba(20,20,19,.3);
+ }
+ .bl-toast.show { opacity: 1; transform: translate(-50%, 0); }
+ .bl-tick {
+  width: 18px; height: 18px; border-radius: 50%; background: var(--olive); flex: none; position: relative;
+ }
+ .bl-tick::after {
+  content: ""; position: absolute; left: 6px; top: 3.5px; width: 4px; height: 8px;
+  border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+ }
+ .bl-toast .m { font-size: 12px; white-space: nowrap; }
+ .bl-chip {
+  font-family: var(--mono); font-size: 10.5px; background: rgba(250,249,245,.14);
+  border: 1px solid rgba(250,249,245,.25); border-radius: 6px; padding: 3px 8px; white-space: nowrap;
+ }
+ .展示-caption {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--g500);
+ }
+ .replay {
+  font-family: var(--mono); font-size: 11px; background: none; border: 1.5px solid var(--g300);
+  border-radius: 8px; color: var(--g700); padding: 5px 12px; cursor: pointer;
+ }
+ .replay:hover { border-color: var(--clay); color: var(--clay-d); }
+
+ /* ---------- pitch ---------- */
+ .pitch { font-family: var(--serif); font-size: 17.5px; line-height: 1.6; max-width: 46em; }
+ .pitch strong { font-weight: 600; }
+
+ /* ---------- objections ---------- */
+ .obj { border: 1.5px solid var(--g200); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+ .obj summary {
+  list-style: none; cursor: pointer; padding: 12px 16px; display: flex; gap: 12px; align-items: baseline;
+  font-weight: 600; font-size: 14.5px;
+ }
+ .obj summary::-webkit-details-marker { display: none; }
+ .obj summary .q { font-family: var(--mono); font-size: 11px; color: var(--clay); flex: none; }
+ .obj summary::after { content: "+"; margin-left: auto; font-family: var(--mono); color: var(--g500); flex: none; }
+ .obj[open] summary::after { content: "–"; }
+ .obj[open] summary { border-bottom: 1.5px solid var(--g200); background: var(--g100); }
+ .obj .a { padding: 13px 16px 14px 16px; font-size: 14px; color: var(--g700); }
+ .obj .ref {
+  display: inline-block; margin-top: 8px; font-family: var(--mono); font-size: 11.5px;
+  color: var(--clay-d); text-decoration: none; border-bottom: 1px dashed var(--g300);
+ }
+ .obj .ref:hover { border-bottom-color: var(--clay-d); }
+
+ /* ---------- 規格說明 table ---------- */
+ .tblwrap { overflow-x: auto; border: 1.5px solid var(--g200); border-radius: 10px; }
+ table.規格說明 { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 560px; }
+ table.規格說明 th, table.規格說明 td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--g200); vertical-align: top; }
+ table.規格說明 tr:last-child td { border-bottom: none; }
+ table.規格說明 th {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--g500); font-weight: 400; background: var(--g100);
+ }
+ table.規格說明 td:first-child { font-weight: 600; white-space: nowrap; width: 140px; }
+ table.規格說明 code, .a code, .risk code, .need code {
+  font-family: var(--mono); font-size: 0.88em; background: var(--g100);
+  border: 1px solid var(--g200); border-radius: 4px; padding: 1px 5px; white-space: nowrap;
+ }
+ .規格說明ref { font-family: var(--mono); font-size: 11px; color: var(--g500); }
+
+ /* ---------- risk + needs cards ---------- */
+ .cardgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+ @media (max-width: 720px) { .cardgrid { grid-template-columns: 1fr; } }
+ .risk, .need {
+  border: 1.5px solid var(--g300); border-radius: 12px; padding: 18px 20px; background: var(--ivory);
+ }
+ .risk { border-left: 4px solid var(--clay); }
+ .need { border-left: 4px solid var(--olive); }
+ .risk h4, .need h4 {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  font-weight: 400; margin-bottom: 12px;
+ }
+ .risk h4 { color: var(--clay-d); }
+ .need h4 { color: var(--olive); }
+ .risk ul { list-style: none; }
+ .risk li { font-size: 13.5px; color: var(--g700); padding-left: 18px; position: relative; margin-bottom: 9px; }
+ .risk li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 7px; height: 2px; background: var(--clay); }
+ .risk li strong { color: var(--slate); }
+
+ .應用程式rover { display: flex; gap: 11px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--g200); }
+ .應用程式rover:last-child { border-bottom: none; }
+ .avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex: none;
+  background: var(--oat); color: var(--clay-d);
+  font-family: var(--mono); font-size: 11px; display: flex; align-items: center; justify-content: center;
+ }
+ .應用程式rover .info { font-size: 13px; line-height: 1.4; }
+ .應用程式rover .info b { display: block; font-size: 13.5px; }
+ .應用程式rover .info .role { font-family: var(--mono); font-size: 10.5px; color: var(--g500); }
+ .應用程式rover .info .asks { color: var(--g700); margin-top: 2px; }
+
+ .bottomline {
+  margin-top: 34px; padding: 16px 20px; background: var(--oat); border-radius: 10px;
+  font-family: var(--serif); font-size: 16px;
+ }
+
+ footer {
+  padding: 26px 0 56px; font-size: 13px; color: var(--g500);
+  border-top: 1.5px solid var(--g300);
+ }
+ footer a { color: var(--clay-d); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="page">
+<a class="backlink" href="index.html">← 所有範例</a>
+<div class="eyebrow">了解你的未知 · 實作後</div>
+<h1>提案與說明文件</h1>
+<p class="lede">交付產品最重要的部分之一，就是取得認可與核准。請 Claude 將原型、規格說明和實作筆記包成容易瀏覽的提案與說明文件。</p>
+<div class="提示詞card">
+<div class="label">提示詞</div>
+<button class="copybtn" id="copyBtn">複製提示詞</button>
+<blockquote id="提示詞Text">將原型、規格說明和實作筆記封裝成一份文件，讓我可以丟到 Slack 取得共識。開頭請先放上展示用的 GIF。</blockquote>
+</div>
+</header>
+<div class="divider">Claude 產出的內容</div>
+ ================= 神器 ================= 
+<article class="產物">
+<div class="doc-top">
+<div class="doc-eyebrow">船舶提案·Acme</div>
+<span class="timechip">90秒閱讀</span>
+</div>
+<h2 class="doc-title">annotation匯出已準備好發貨</h2>
+<p class="doc-sub">原型、規格和推出計畫集中於一處。 <strong>Ask:</strong> 週五前已完成四次簽字，週一開始升旗。</p>
+ 1·展示 
+<h3 class="sec"><span class="n">01</span> 觀看它的工作</h3>
+<div class="展示-shell">
+<div aria-label="Animated 模擬 of the annotation export flow in Acme" class="展示" id="展示">
+<div class="bl-titlebar">
+<span class="dot"></span><span class="dot"></span><span class="dot"></span>
+<span class="bl-name">Acme — q3_launch_teaser_v4.mp4 · 留言</span>
+</div>
+<div class="bl-body">
+<div class="bl-stage">
+<div class="bl-video">
+<span class="bl-play"></span>
+<span class="bl-tc">00:42 / 02:05</span>
+</div>
+<div class="bl-timeline">
+<div class="bl-track"><div class="fill"></div></div>
+<span class="bl-pin" id="pin1" style="left: 18%;"></span>
+<span class="bl-pin" id="pin2" style="left: 41%;"></span>
+<span class="bl-pin" id="pin3" style="left: 73%;"></span>
+</div>
+</div>
+<div class="bl-panel">
+<div class="bl-panel-head"><span>annotation</span><span class="bl-count" id="selCount">已選擇 0 個</span></div>
+<div class="bl-ann" id="ann1">
+<span class="bl-check"></span>
+<div>
+<div class="who">瑪雅R。 <span class="t">00:23</span></div>
+<div class="txt">標誌落地太晚——拉進 8 幀？</div>
+</div>
+</div>
+<div class="bl-ann" id="ann2">
+<span class="bl-check"></span>
+<div>
+<div class="who">德文P。 <span class="t">00:51</span></div>
+<div class="txt">此處的顏色偏移與主等級的比較</div>
+</div>
+</div>
+<div class="bl-ann" id="ann3">
+<span class="bl-check"></span>
+<div>
+<div class="who">瑪雅R。 <span class="t">01:30</span></div>
+<div class="txt">已獲批准 — 最終 CTA 讀起來很棒</div>
+</div>
+</div>
+<button class="bl-export" id="exportBtn" tabindex="-1">匯出選定的</button>
+</div>
+</div>
+<div class="bl-progress" id="progress">
+<div class="bl-prog-card">
+<div class="pt">匯出 3 個annotation</div>
+<div class="ps" id="progStatus">收集annotation...</div>
+<div class="bl-bar"><div class="b" id="progBar"></div></div>
+</div>
+</div>
+<div class="bl-toast" id="toast">
+<span class="bl-tick"></span>
+<span class="m">出口準備就緒</span>
+<span class="bl-chip">q3_teaser_notes.srt · 3 個提示</span>
+</div>
+</div>
+<div class="展示-caption">
+<span id="展示State">選擇→匯出→完成·自動循環</span>
+<button class="replay" id="replayBtn">↻ 重播</button>
+</div>
+</div>
+ 2·音高 
+<h3 class="sec"><span class="n">02</span> 球場</h3>
+<p class="pitch">審閱者在 Acme 中留下回饋，然後將其重新輸入到電子郵件、Notion 和 edit-bay 軟體中 — <strong>流失訪談中被提及最多的一個缺口（佔離職團隊的 41%）</strong>。annotation匯出使用我們已經運行的基礎設施，一鍵將任何選擇的annotation和繪圖轉換為 SRT、CSV 或 PDF。它的構建、標記和負載測試為每個會話 12k 個annotation，並且一次切換即可逆轉。從這裡到發貨之間唯一的事情就是下面的四個簽名。</p>
+ 3·反對意見 
+<h3 class="sec"><span class="n">03</span> 審稿者會問什麼</h3>
+<details class="obj" open="">
+<summary><span class="q">Q1</span>這是否會將僅限內部的留言洩露給客戶？</summary>
+<div class="a">否。匯出透過與審核頁面相同的可見性解析器運行：annotation已標記 <code>internal</code> 除非出口商持有，否則被排除在外 <code>workspace:admin</code> 並透過標記的複選框明確選擇加入。涵蓋 14 項許可矩陣測試。
+    <br/><a class="ref" href="#規格說明">↗ 規範 §4.2 — 可見性與權限</a></div>
+</details>
+<details class="obj">
+<summary><span class="q">Q2</span>一個巨大的會話會發生什麼事——數千個annotation？</summary>
+<div class="a">匯出按每批 500 個annotation進行分頁並串流傳輸檔案。針對prod 中最大的真實會話（12,400 個annotation的機構審核）的壓力運行在 3.1 秒內完成；典型會話的 p95 為 340 毫秒。
+    <br/><a class="ref" href="#規格說明">↗ 實作筆記，06-24 — 負載測試結果</a></div>
+</details>
+<details class="obj">
+<summary><span class="q">第三季</span>為什麼使用文件格式而不是公共 API？</summary>
+<div class="a">SRT + CSV + PDF 涵蓋了 212 個標記的認同票證中的 83% <code>export-request</code> 過去兩個季度。 API 是正確的第二階段——它需要驗證範圍工作，而這不需要。檔案現在可以解鎖使用者，而不會排除 API 設計。
+    <br/><a class="ref" href="#規格說明">↗ metric — 認同標籤分析，Q1–Q2</a></div>
+</details>
+<details class="obj">
+<summary><span class="q">第四季</span>這是否會增加我們必須營運的新基礎設施？</summary>
+<div class="a">零新服務。 SRT/CSV 在現有工作池中內嵌渲染（<code>services/render-workers</code>）； PDF 重複使用已產生每週摘要的報告服務。沒有新佇列，沒有新資料存儲，沒有架構遷移。
+    <br/><a class="ref" href="#規格說明">↗ 規範 §5.1 — 架構</a></div>
+</details>
+<details class="obj">
+<summary><span class="q">Q5</span>匯出的客戶內容的合規情況如何？</summary>
+<div class="a">每次匯出都會在文件元資料中標記workspace ID、請求使用者和時間戳，並寫入審核日誌 (<code>audit.annotation_export</code>）。文件透過過期的簽名 URL（24 小時）提供，並且不會在該視窗之外儲存。
+    <br/><a class="ref" href="#規格說明">↗ 規範 §6 — 審核與保留</a></div>
+</details>
+ 4·規格概要 
+<h3 class="sec" id="規格說明"><span class="n">04</span> 規格一覽</h3>
+<div class="tblwrap">
+<table class="規格說明">
+<thead><tr><th>面積</th><th>決定</th><th>參考號</th></tr></thead>
+<tbody>
+<tr><td>格式</td><td>SRT（時間編碼提示）、CSV（平面，包括繪圖邊界框）、PDF（幀縮圖 + annotation）</td><td class="規格說明ref">§2</td></tr>
+<tr><td>切入點</td><td>annotation面板 → 多選 → <b>匯出選定的</b>;也在會話選單中“匯出全部”</td><td class="規格說明ref">§3.1</td></tr>
+<tr><td>權限</td><td>需要 <code>session:comment</code> 或以上； <code>internal</code> 預設排除annotation</td><td class="規格說明ref">§4.2</td></tr>
+<tr><td>限制</td><td>500 個annotation/批次，串流；每次匯出 25k 硬上限，並具有明確的錯誤狀態</td><td class="規格說明ref">§5.3</td></tr>
+<tr><td>遙測</td><td><code>export_started</code>, <code>export_completed</code> （格式、計數、持續時間）、 <code>export_failed</code></td><td class="規格說明ref">§7</td></tr>
+<tr><td>特徵標誌</td><td><code>annotation_export</code> — 兩週內減少 → 5% → 50% → 100%</td><td class="規格說明ref">§8</td></tr>
+</tbody>
+</table>
+</div>
+ 5·風險+需求 
+<h3 class="sec"><span class="n">05</span> 風險、回滾以及我需要你做什麼</h3>
+<div class="cardgrid">
+<div class="risk">
+<h4>風險與回滾</h4>
+<ul>
+<li><strong>回滾是一種切換。</strong> 翻轉 <code>annotation_export</code> off — 沒有交付模式遷移，沒有什麼可以放鬆的。</li>
+<li><strong>爆炸半徑是有限的。</strong> 匯出在共用工作池中執行，每個作業逾時 30 秒；失控的作業不能導致審核回放不足。</li>
+<li><strong>最糟糕的可信失敗：</strong> 如果簽名 URL 清理滯後，則孤立的匯出檔案 — 無論如何，它們都會在 24 小時內自行過期。</li>
+<li><strong>已知差距：</strong> 繪圖annotation扁平化為 CSV 中的邊界框（完整向量僅限 PDF）。產品內記錄；第 2 階段項目。</li>
+</ul>
+</div>
+<div class="need">
+<h4>我需要你做什麼</h4>
+<div class="應用程式rover">
+<span class="avatar">PN</span>
+<div class="info"><b>普里亞·納塔拉詹</b><span class="role">工程師主管，回放和審核</span>
+<div class="asks">同意重複使用渲染工作池（規格第 5.1 節）－唯一的共用基礎架構相依性。</div></div>
+</div>
+<div class="應用程式rover">
+<span class="avatar">ES</span>
+<div class="info"><b>埃琳娜·索羅金</b><span class="role">安全性</span>
+<div class="asks">批准可見性規則和審核日誌形狀（規範§4.2、§6）。</div></div>
+</div>
+<div class="應用程式rover">
+<span class="avatar">兆瓦</span>
+<div class="info"><b>馬庫斯·韋伯</b><span class="role">設計</span>
+<div class="asks">匯出模式和錯誤狀態的最終傳遞 - 上面的原型是當前的。</div></div>
+</div>
+<div class="應用程式rover">
+<span class="avatar">德克</span>
+<div class="info"><b>達納·金</b><span class="role">專案經理，合作</span>
+<div class="asks">批准旗幟坡道時間表（規範§8）並擁有變更日誌條目。</div></div>
+</div>
+</div>
+</div>
+<div class="bottomline">上面的一切都是在旗幟背後建造和測試的。在你的作品上回覆 ✓，或在我的日曆上抽出 15 分鐘 — <b>目標：週一開始斜坡。</b></div>
+</article>
+<footer>屬於 <a href="index.html">了解你的未知</a> — 部落格文章的搭配範例。</footer>
+</div>
+<script>
+(function () {
+ // ---------- copy 提示詞 ----------
+ var PROMPT = "將原型、規格和實作annotation打包到一個文件中，我可以將其放入 Slack 中以獲得對運輸annotation匯出的認同。開頭先放 展示。";
+ var copyBtn = document.getElementById("copyBtn");
+ copyBtn.addEventListener("click", function () {
+  function done() {
+   copyBtn.textContent = "copied";
+   copyBtn.classList.add("done");
+   setTimeout(function () {
+    copyBtn.textContent = "複製提示詞";
+    copyBtn.classList.remove("done");
+   }, 1600);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+   navigator.clipboard.writeText(PROMPT).then(done, fallback);
+  } else { fallback(); }
+  function fallback() {
+   var ta = document.createElement("textarea");
+   ta.value = PROMPT;
+   ta.style.position = "fixed"; ta.style.opacity = "0";
+   document.body.應用程式endChild(ta);
+   ta.select();
+   try { document.execCommand("copy"); } catch (e) {}
+   document.body.removeChild(ta);
+   done();
+  }
+ });
+
+ // ---------- 展示 animation ----------
+ var anns = [document.getElementById("ann1"), document.getElementById("ann2"), document.getElementById("ann3")];
+ var pins = [document.getElementById("pin1"), document.getElementById("pin2"), document.getElementById("pin3")];
+ var exportBtn = document.getElementById("exportBtn");
+ var progress = document.getElementById("progress");
+ var progBar = document.getElementById("progBar");
+ var progStatus = document.getElementById("progStatus");
+ var toast = document.getElementById("toast");
+ var selCount = document.getElementById("selCount");
+ var timers = [];
+
+ function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+
+ function reset() {
+  timers.forEach(clearTimeout);
+  timers = [];
+  anns.forEach(function (a) { a.classList.remove("sel"); });
+  pins.forEach(function (p) { p.classList.remove("on"); });
+  exportBtn.classList.remove("armed", "pressed");
+  progress.classList.remove("show");
+  progBar.style.transition = "none";
+  progBar.style.width = "0%";
+  // force reflow so the next width 變更 animates
+  void progBar.offsetWidth;
+  progBar.style.transition = "";
+  progStatus.textContent = "收集annotation…";
+  toast.classList.remove("show");
+  selCount.textContent = "已選擇 0 個";
+ }
+
+ function play() {
+  reset();
+  [0, 1, 2].forEach(function (i) {
+   at(500 + i * 450, function () {
+    anns[i].classList.add("sel");
+    pins[i].classList.add("on");
+    selCount.textContent = (i + 1) + " selected";
+    if (i === 2) exportBtn.classList.add("armed");
+   });
+  });
+  at(2100, function () { exportBtn.classList.add("pressed"); });
+  at(2300, function () {
+   exportBtn.classList.remove("pressed");
+   progress.classList.add("show");
+  });
+  at(2450, function () { progBar.style.width = "100%"; });
+  at(3100, function () { progStatus.textContent = "渲染 SRT 提示…"; });
+  at(3800, function () { progStatus.textContent = "簽署下載 URL…"; });
+  at(4300, function () {
+   progress.classList.remove("show");
+   toast.classList.add("show");
+  });
+  at(7000, play); // loop
+ }
+
+ document.getElementById("replayBtn").addEventListener("click", play);
+ play();
+})();
+</script>
+</body>
+</html>
